@@ -16,6 +16,7 @@ import '../clipboard/clipboard_screen.dart';
 import '../password_vault/vault_screen.dart';
 import '../pdf_tools/pdf_tools_screen.dart';
 import '../settings/settings_screen.dart';
+import '../timetable/timetable_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -160,22 +161,24 @@ class _HomeScreenState extends State<HomeScreen> {
       _FeatureItem('Notes', Icons.sticky_note_2_rounded, AppColors.notes, () => _navigateTo(context, const NotesScreen())),
       _FeatureItem('To-Do', Icons.checklist_rounded, AppColors.todo, () => _navigateTo(context, const TodoScreen())),
       _FeatureItem('Expenses', Icons.account_balance_wallet_rounded, AppColors.expense, () => _navigateTo(context, const ExpenseScreen())),
+      _FeatureItem('Timetable', Icons.calendar_view_week_rounded, AppColors.timetable, () => _navigateTo(context, const TimetableScreen())),
     ];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: GridView.count(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 0.95,
+        childAspectRatio: 2.0,
         children: items.map((item) => FeatureCard(
           label: item.label,
           icon: item.icon,
           color: item.color,
           onTap: item.onTap,
+          compact: true,
         )).toList(),
       ),
     );
@@ -285,6 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _FeatureItem('Notes', Icons.sticky_note_2_rounded, AppColors.notes, () => _navigateTo(context, const NotesScreen())),
     _FeatureItem('To-Do', Icons.checklist_rounded, AppColors.todo, () => _navigateTo(context, const TodoScreen())),
     _FeatureItem('Expense Tracker', Icons.account_balance_wallet_rounded, AppColors.expense, () => _navigateTo(context, const ExpenseScreen())),
+    _FeatureItem('Timetable', Icons.calendar_view_week_rounded, AppColors.timetable, () => _navigateTo(context, const TimetableScreen())),
     _FeatureItem('Date Converter', Icons.calendar_month_rounded, AppColors.dateConverter, () => _navigateTo(context, const DateConverterScreen())),
     _FeatureItem('Stopwatch', Icons.timer_rounded, AppColors.stopwatch, () => _navigateTo(context, const StopwatchScreen())),
     _FeatureItem('Timer', Icons.hourglass_bottom_rounded, AppColors.timer, () => _navigateTo(context, const TimerScreen())),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'notes/notes_screen.dart';
 import 'todo/todo_screen.dart';
 import 'expense/expense_screen.dart';
+import 'timetable/timetable_screen.dart';
 import '../core/theme/app_theme.dart';
 
 class ProductivityTab extends StatelessWidget {
@@ -42,6 +43,15 @@ class ProductivityTab extends StatelessWidget {
             Icons.account_balance_wallet_rounded,
             AppColors.expense,
             const ExpenseScreen(),
+          ),
+          const SizedBox(height: 12),
+          _buildBigCard(
+            context,
+            'Timetable',
+            'Weekly class schedule with reminders',
+            Icons.calendar_view_week_rounded,
+            AppColors.timetable,
+            const TimetableScreen(),
           ),
         ],
       ),

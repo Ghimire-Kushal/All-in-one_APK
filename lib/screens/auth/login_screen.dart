@@ -40,12 +40,46 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
+        final msg = switch (e.code) {
+          'invalid-credential' || 'wrong-password' => 'Incorrect email or password.',
+          'user-not-found' => 'No account found with this email.',
+          'user-disabled' => 'This account has been disabled.',
+          'too-many-requests' => 'Too many attempts. Try again later.',
+          _ => e.message ?? 'Login failed.',
+        };
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Login failed')),
+          SnackBar(content: Text(msg), backgroundColor: Colors.redAccent),
         );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    final email = _emailCtrl.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter your email first')),
+      );
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Password reset email sent to $email'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'Failed to send reset email'), backgroundColor: Colors.redAccent),
+        );
+      }
     }
   }
 
@@ -88,7 +122,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 onSubmitted: (_) => _login(),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _forgotPassword,
+                  child: const Text('Forgot Password?', style: TextStyle(fontSize: 13)),
+                ),
+              ),
+              const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(

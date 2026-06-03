@@ -133,4 +133,5 @@ class AppColors {
   static const Color clipboard = Color(0xFFEF5350);
   static const Color pdf = Color(0xFFF57C00);
   static const Color vault = Color(0xFFAB47BC);
+  static const Color timetable = Color(0xFF26C6DA);
 }

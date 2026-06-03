@@ -11,6 +11,7 @@ import 'providers/todo_provider.dart';
 import 'providers/expense_provider.dart';
 import 'providers/clipboard_provider.dart';
 import 'providers/password_vault_provider.dart';
+import 'providers/timetable_provider.dart';
 import 'screens/main_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'services/notification_service.dart';
@@ -29,6 +30,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ExpenseProvider()),
         ChangeNotifierProvider(create: (_) => ClipboardProvider()),
         ChangeNotifierProvider(create: (_) => PasswordVaultProvider()),
+        ChangeNotifierProvider(create: (_) => TimetableProvider()),
       ],
       child: const MyApp(),
     ),
