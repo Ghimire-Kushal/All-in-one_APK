@@ -16,8 +16,9 @@ class TodoProvider extends ChangeNotifier {
   StreamSubscription<QuerySnapshot>? _fsSub;
 
   List<Task> get tasks => _tasks;
-  List<Task> get pending => _tasks.where((t) => !t.isCompleted).toList()
-    ..sort((a, b) => b.priority.compareTo(a.priority));
+  List<Task> get pending =>
+      _tasks.where((t) => !t.isCompleted).toList()
+        ..sort((a, b) => b.priority.compareTo(a.priority));
   List<Task> get completed => _tasks.where((t) => t.isCompleted).toList();
 
   TodoProvider() {
@@ -32,7 +33,10 @@ class TodoProvider extends ChangeNotifier {
   }
 
   CollectionReference<Map<String, dynamic>> _col(String uid) =>
-      FirebaseFirestore.instance.collection('users').doc(uid).collection('tasks');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('tasks');
 
   void _onAuthChanged(User? user) async {
     await _fsSub?.cancel();
@@ -65,7 +69,9 @@ class TodoProvider extends ChangeNotifier {
     final raw = prefs.getString(_prefKey);
     if (raw != null) {
       final list = jsonDecode(raw) as List;
-      _tasks = list.map((e) => Task.fromJson(e as Map<String, dynamic>)).toList();
+      _tasks = list
+          .map((e) => Task.fromJson(e as Map<String, dynamic>))
+          .toList();
       for (final task in _tasks) {
         if (!task.isCompleted &&
             task.reminderTime != null &&
@@ -79,7 +85,10 @@ class TodoProvider extends ChangeNotifier {
 
   Future<void> _saveLocal() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, jsonEncode(_tasks.map((t) => t.toJson()).toList()));
+    await prefs.setString(
+      _prefKey,
+      jsonEncode(_tasks.map((t) => t.toJson()).toList()),
+    );
   }
 
   Future<void> _saveRemote(Task task) async {
@@ -161,7 +170,10 @@ class TodoProvider extends ChangeNotifier {
     for (final t in _tasks.where((t) => t.isCompleted)) {
       _cancelReminder(t.id);
     }
-    final toDelete = _tasks.where((t) => t.isCompleted).map((t) => t.id).toList();
+    final toDelete = _tasks
+        .where((t) => t.isCompleted)
+        .map((t) => t.id)
+        .toList();
     _tasks.removeWhere((t) => t.isCompleted);
     notifyListeners();
     await _saveLocal();

@@ -27,7 +27,10 @@ class _NotesScreenState extends State<NotesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notes', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Notes',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded),
@@ -56,14 +59,16 @@ class _NotesScreenState extends State<NotesScreen> {
                 ? _empty()
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.85,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.85,
+                        ),
                     itemCount: notes.length,
-                    itemBuilder: (context, i) => _noteCard(context, notes[i], isDark),
+                    itemBuilder: (context, i) =>
+                        _noteCard(context, notes[i], isDark),
                   ),
           ),
         ],
@@ -82,7 +87,7 @@ class _NotesScreenState extends State<NotesScreen> {
   Widget _noteCard(BuildContext context, Note note, bool isDark) {
     final bg = isDark
         ? const Color(0xFF1C1F2A)
-        : _hex(note.colorHex).withOpacity(0.9);
+        : _hex(note.colorHex).withValues(alpha: 0.9);
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -105,12 +110,18 @@ class _NotesScreenState extends State<NotesScreen> {
             Row(
               children: [
                 if (note.isPinned)
-                  const Icon(Icons.push_pin_rounded, size: 14, color: Colors.orange),
+                  const Icon(
+                    Icons.push_pin_rounded,
+                    size: 14,
+                    color: Colors.orange,
+                  ),
                 const Spacer(),
                 GestureDetector(
                   onTap: () => context.read<NotesProvider>().togglePin(note.id),
                   child: Icon(
-                    note.isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+                    note.isPinned
+                        ? Icons.push_pin_rounded
+                        : Icons.push_pin_outlined,
                     size: 16,
                     color: Colors.grey[500],
                   ),
@@ -121,7 +132,10 @@ class _NotesScreenState extends State<NotesScreen> {
             if (note.title.isNotEmpty)
               Text(
                 note.title,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -129,7 +143,11 @@ class _NotesScreenState extends State<NotesScreen> {
             Expanded(
               child: Text(
                 note.content,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600], height: 1.4),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  height: 1.4,
+                ),
                 overflow: TextOverflow.fade,
               ),
             ),
@@ -143,7 +161,11 @@ class _NotesScreenState extends State<NotesScreen> {
                 const Spacer(),
                 GestureDetector(
                   onTap: () => _confirmDelete(context, note),
-                  child: Icon(Icons.delete_outline_rounded, size: 16, color: Colors.grey[400]),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 16,
+                    color: Colors.grey[400],
+                  ),
                 ),
               ],
             ),
@@ -160,7 +182,10 @@ class _NotesScreenState extends State<NotesScreen> {
         title: const Text('Delete note?'),
         content: const Text('This action cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () {
               context.read<NotesProvider>().deleteNote(note.id);
@@ -181,7 +206,10 @@ class _NotesScreenState extends State<NotesScreen> {
         const SizedBox(height: 12),
         Text('No notes yet', style: TextStyle(color: Colors.grey[500])),
         const SizedBox(height: 6),
-        Text('Tap + to create your first note', style: TextStyle(fontSize: 12, color: Colors.grey[400])),
+        Text(
+          'Tap + to create your first note',
+          style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+        ),
       ],
     ),
   );

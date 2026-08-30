@@ -60,25 +60,39 @@ class PasswordVaultProvider extends ChangeNotifier {
     final raw = prefs.getString(_entriesKey);
     if (raw != null) {
       final list = jsonDecode(raw) as List;
-      _entries = list.map((e) => PasswordEntry.fromJson(e as Map<String, dynamic>)).toList();
+      _entries = list
+          .map((e) => PasswordEntry.fromJson(e as Map<String, dynamic>))
+          .toList();
     }
   }
 
   Future<void> _save() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_entriesKey, jsonEncode(_entries.map((e) => e.toJson()).toList()));
+    await prefs.setString(
+      _entriesKey,
+      jsonEncode(_entries.map((e) => e.toJson()).toList()),
+    );
   }
 
-  Future<void> addEntry(String title, String username, String password, {String website = '', String note = ''}) async {
-    _entries.insert(0, PasswordEntry(
-      id: _uuid.v4(),
-      title: title,
-      username: username,
-      password: password,
-      website: website,
-      note: note,
-      createdAt: DateTime.now(),
-    ));
+  Future<void> addEntry(
+    String title,
+    String username,
+    String password, {
+    String website = '',
+    String note = '',
+  }) async {
+    _entries.insert(
+      0,
+      PasswordEntry(
+        id: _uuid.v4(),
+        title: title,
+        username: username,
+        password: password,
+        website: website,
+        note: note,
+        createdAt: DateTime.now(),
+      ),
+    );
     notifyListeners();
     await _save();
   }

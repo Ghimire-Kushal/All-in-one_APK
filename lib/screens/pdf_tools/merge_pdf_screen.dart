@@ -38,9 +38,9 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
   }
 
   void _remove(int index) => setState(() {
-        _files.removeAt(index);
-        _outputPath = null;
-      });
+    _files.removeAt(index);
+    _outputPath = null;
+  });
 
   void _reorder(int oldIndex, int newIndex) {
     setState(() {
@@ -61,17 +61,20 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
         await for (final page in Printing.raster(bytes, dpi: 150)) {
           final png = await page.toPng();
           final img = pw.MemoryImage(png);
-          doc.addPage(pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            margin: pw.EdgeInsets.zero,
-            build: (_) => pw.Center(
-              child: pw.Image(img, fit: pw.BoxFit.contain),
+          doc.addPage(
+            pw.Page(
+              pageFormat: PdfPageFormat.a4,
+              margin: pw.EdgeInsets.zero,
+              build: (_) =>
+                  pw.Center(child: pw.Image(img, fit: pw.BoxFit.contain)),
             ),
-          ));
+          );
         }
       }
       final dir = await getTemporaryDirectory();
-      final out = File('${dir.path}/merged_${DateTime.now().millisecondsSinceEpoch}.pdf');
+      final out = File(
+        '${dir.path}/merged_${DateTime.now().millisecondsSinceEpoch}.pdf',
+      );
       await out.writeAsBytes(await doc.save());
       setState(() {
         _outputPath = out.path;
@@ -79,7 +82,10 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('PDFs merged!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('PDFs merged!'),
+            backgroundColor: Colors.green,
+          ),
         );
       }
     } catch (e) {
@@ -102,10 +108,16 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Merge PDF', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Merge PDF',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           if (_outputPath != null)
-            IconButton(icon: const Icon(Icons.share_rounded), onPressed: _share),
+            IconButton(
+              icon: const Icon(Icons.share_rounded),
+              onPressed: _share,
+            ),
         ],
       ),
       body: Column(
@@ -127,8 +139,13 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
                   children: [
                     Icon(Icons.add_rounded, color: _accent),
                     const SizedBox(width: 8),
-                    Text('Pick PDFs',
-                        style: TextStyle(color: _accent, fontWeight: FontWeight.w600)),
+                    Text(
+                      'Pick PDFs',
+                      style: TextStyle(
+                        color: _accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -141,12 +158,24 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.merge_type_rounded, size: 64, color: Colors.grey[400]),
+                        Icon(
+                          Icons.merge_type_rounded,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
                         const SizedBox(height: 12),
-                        Text('No PDFs selected', style: TextStyle(color: Colors.grey[500])),
+                        Text(
+                          'No PDFs selected',
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
                         const SizedBox(height: 4),
-                        Text('Pick 2 or more PDFs to merge',
-                            style: TextStyle(color: Colors.grey[400], fontSize: 12)),
+                        Text(
+                          'Pick 2 or more PDFs to merge',
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
                   )
@@ -194,14 +223,19 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
                                   width: 16,
                                   height: 16,
                                   child: CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white))
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
                               : const Icon(Icons.merge_type_rounded),
                           label: Text(_isMerging ? 'Merging…' : 'Merge PDFs'),
                           style: FilledButton.styleFrom(
                             backgroundColor: _accent,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          onPressed: (_files.length < 2 || _isMerging) ? null : _merge,
+                          onPressed: (_files.length < 2 || _isMerging)
+                              ? null
+                              : _merge,
                         ),
                       ),
                     ],
@@ -259,21 +293,31 @@ class _FileTile extends StatelessWidget {
             color: const Color(0xFF5C6BC0).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(Icons.picture_as_pdf_rounded,
-              color: Color(0xFF5C6BC0), size: 22),
+          child: const Icon(
+            Icons.picture_as_pdf_rounded,
+            color: Color(0xFF5C6BC0),
+            size: 22,
+          ),
         ),
-        title: Text(file.name,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis),
-        subtitle: Text('PDF ${index + 1}',
-            style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+        title: Text(
+          file.name,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          'PDF ${index + 1}',
+          style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded,
-                  color: Colors.redAccent, size: 20),
+              icon: const Icon(
+                Icons.delete_outline_rounded,
+                color: Colors.redAccent,
+                size: 20,
+              ),
               onPressed: onRemove,
             ),
             const Icon(Icons.drag_handle_rounded, color: Colors.grey, size: 20),

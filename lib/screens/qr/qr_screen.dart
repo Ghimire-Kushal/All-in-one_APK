@@ -12,7 +12,8 @@ class QrScreen extends StatefulWidget {
   State<QrScreen> createState() => _QrScreenState();
 }
 
-class _QrScreenState extends State<QrScreen> with SingleTickerProviderStateMixin {
+class _QrScreenState extends State<QrScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tab;
 
   // Generator
@@ -61,7 +62,10 @@ class _QrScreenState extends State<QrScreen> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QR Code', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'QR Code',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         bottom: TabBar(
           controller: _tab,
           tabs: const [
@@ -72,10 +76,7 @@ class _QrScreenState extends State<QrScreen> with SingleTickerProviderStateMixin
       ),
       body: TabBarView(
         controller: _tab,
-        children: [
-          _buildGenerator(context),
-          const _QrScannerTab(),
-        ],
+        children: [_buildGenerator(context), const _QrScannerTab()],
       ),
     );
   }
@@ -119,7 +120,10 @@ class _QrScreenState extends State<QrScreen> with SingleTickerProviderStateMixin
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(color: cs.primary.withValues(alpha: 0.1), blurRadius: 20),
+                        BoxShadow(
+                          color: cs.primary.withValues(alpha: 0.1),
+                          blurRadius: 20,
+                        ),
                       ],
                     ),
                     child: QrImageView(
@@ -133,7 +137,9 @@ class _QrScreenState extends State<QrScreen> with SingleTickerProviderStateMixin
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: _qrData));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Data copied to clipboard')),
+                        const SnackBar(
+                          content: Text('Data copied to clipboard'),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.copy_rounded, size: 16),
@@ -216,11 +222,14 @@ class _QrScreenState extends State<QrScreen> with SingleTickerProviderStateMixin
           children: [
             Icon(icon, size: 14, color: isSelected ? cs.primary : Colors.grey),
             const SizedBox(width: 6),
-            Text(label, style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isSelected ? cs.primary : Colors.grey,
-            )),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? cs.primary : Colors.grey,
+              ),
+            ),
           ],
         ),
       ),
@@ -237,7 +246,8 @@ class _QrScannerTab extends StatefulWidget {
   State<_QrScannerTab> createState() => _QrScannerTabState();
 }
 
-class _QrScannerTabState extends State<_QrScannerTab> with WidgetsBindingObserver {
+class _QrScannerTabState extends State<_QrScannerTab>
+    with WidgetsBindingObserver {
   late final MobileScannerController _controller;
   String? _scannedValue;
   bool _torchOn = false;
@@ -311,7 +321,8 @@ class _QrScannerTabState extends State<_QrScannerTab> with WidgetsBindingObserve
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (_) => _ScanResultSheet(value: value),
     ).then((_) {
       setState(() {
@@ -329,10 +340,7 @@ class _QrScannerTabState extends State<_QrScannerTab> with WidgetsBindingObserve
     return Stack(
       children: [
         // Camera view (always running in background)
-        MobileScanner(
-          controller: _controller,
-          onDetect: _onDetect,
-        ),
+        MobileScanner(controller: _controller, onDetect: _onDetect),
 
         // Gallery image preview overlay
         if (_galleryImage != null)
@@ -342,10 +350,12 @@ class _QrScannerTabState extends State<_QrScannerTab> with WidgetsBindingObserve
               child: Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.file(_galleryImage!,
-                      fit: BoxFit.contain,
-                      width: 280,
-                      height: 280),
+                  child: Image.file(
+                    _galleryImage!,
+                    fit: BoxFit.contain,
+                    width: 280,
+                    height: 280,
+                  ),
                 ),
               ),
             ),
@@ -366,7 +376,9 @@ class _QrScannerTabState extends State<_QrScannerTab> with WidgetsBindingObserve
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _OverlayButton(
-                  icon: _torchOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                  icon: _torchOn
+                      ? Icons.flash_on_rounded
+                      : Icons.flash_off_rounded,
                   onTap: () {
                     _controller.toggleTorch();
                     setState(() => _torchOn = !_torchOn);
@@ -457,7 +469,10 @@ class _ScanOverlayPainter extends CustomPainter {
     // Dim overlay with a clear hole
     canvas.saveLayer(Offset.zero & size, Paint());
     canvas.drawRect(Offset.zero & size, dimPaint);
-    canvas.drawRRect(RRect.fromLTRBR(left, top, right, bottom, const Radius.circular(r)), clearPaint);
+    canvas.drawRRect(
+      RRect.fromLTRBR(left, top, right, bottom, const Radius.circular(r)),
+      clearPaint,
+    );
     canvas.restore();
 
     // Corner brackets
@@ -487,30 +502,45 @@ class _ScanResultSheet extends StatelessWidget {
   final String value;
   const _ScanResultSheet({required this.value});
 
-  bool get _isUrl => value.startsWith('http://') || value.startsWith('https://');
+  bool get _isUrl =>
+      value.startsWith('http://') || value.startsWith('https://');
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        20,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 40,
             height: 4,
-            decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
           const SizedBox(height: 20),
           Container(
             width: 56,
             height: 56,
-            decoration: BoxDecoration(color: cs.primaryContainer, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: cs.primaryContainer,
+              shape: BoxShape.circle,
+            ),
             child: Icon(Icons.qr_code_rounded, color: cs.primary, size: 28),
           ),
           const SizedBox(height: 12),
-          const Text('QR Code Scanned', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          const Text(
+            'QR Code Scanned',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 16),
           Container(
             width: double.infinity,
@@ -548,9 +578,9 @@ class _ScanResultSheet extends StatelessWidget {
                     label: const Text('Open URL'),
                     onPressed: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('URL: $value')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('URL: $value')));
                     },
                   ),
                 ),

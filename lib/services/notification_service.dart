@@ -28,7 +28,8 @@ class NotificationService {
 
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     // Explicitly create channels so sound/vibration settings are always correct
     await androidPlugin?.createNotificationChannel(
@@ -55,7 +56,8 @@ class NotificationService {
     // Request Android 13+ notification permission
     await _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.requestNotificationsPermission();
   }
 
@@ -112,7 +114,8 @@ class NotificationService {
   // Deterministic int IDs, within int32 safe range
   int idFromTaskId(String taskId) => taskId.hashCode.abs() % 2147483647;
   // Offset by 1B to avoid collision with task notification IDs
-  int idFromTimetableId(String id) => (id.hashCode.abs() % 1000000000) + 1000000000;
+  int idFromTimetableId(String id) =>
+      (id.hashCode.abs() % 1000000000) + 1000000000;
 
   /// Schedule a recurring weekly notification that fires [notifyMinutesBefore]
   /// minutes before [classHour]:[classMinute] every [classWeekday].
@@ -124,8 +127,12 @@ class NotificationService {
     required int classMinute,
     required int notifyMinutesBefore,
   }) async {
-    final fireTime =
-        _nextWeekdayFireTime(classWeekday, classHour, classMinute, notifyMinutesBefore);
+    final fireTime = _nextWeekdayFireTime(
+      classWeekday,
+      classHour,
+      classMinute,
+      notifyMinutesBefore,
+    );
 
     await _plugin.zonedSchedule(
       id,
@@ -143,7 +150,8 @@ class NotificationService {
           enableVibration: true,
           fullScreenIntent: true,
           styleInformation: BigTextStyleInformation(
-              '$subject starts in $notifyMinutesBefore minutes'),
+            '$subject starts in $notifyMinutesBefore minutes',
+          ),
         ),
         iOS: const DarwinNotificationDetails(
           presentAlert: true,
@@ -162,7 +170,11 @@ class NotificationService {
   /// ([classHour]:[classMinute] − [minutesBefore]), then wraps it as a
   /// local TZDateTime so [zonedSchedule] fires at the correct time every week.
   tz.TZDateTime _nextWeekdayFireTime(
-      int classWeekday, int classHour, int classMinute, int minutesBefore) {
+    int classWeekday,
+    int classHour,
+    int classMinute,
+    int minutesBefore,
+  ) {
     final now = DateTime.now();
 
     // Subtract the offset to get the actual fire time-of-day
@@ -185,13 +197,23 @@ class NotificationService {
     }
 
     // Start from today at the fire time, then advance until weekday matches
-    var candidate =
-        DateTime(now.year, now.month, now.day, fireHour, fireMinute);
+    var candidate = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      fireHour,
+      fireMinute,
+    );
     while (candidate.weekday != fireWeekday || !candidate.isAfter(now)) {
       candidate = candidate.add(const Duration(days: 1));
     }
 
     return tz.TZDateTime.local(
-        candidate.year, candidate.month, candidate.day, fireHour, fireMinute);
+      candidate.year,
+      candidate.month,
+      candidate.day,
+      fireHour,
+      fireMinute,
+    );
   }
 }

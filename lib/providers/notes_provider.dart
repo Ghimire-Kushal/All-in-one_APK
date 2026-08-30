@@ -30,7 +30,10 @@ class NotesProvider extends ChangeNotifier {
   }
 
   CollectionReference<Map<String, dynamic>> _col(String uid) =>
-      FirebaseFirestore.instance.collection('users').doc(uid).collection('notes');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('notes');
 
   void _onAuthChanged(User? user) async {
     await _fsSub?.cancel();
@@ -64,7 +67,9 @@ class NotesProvider extends ChangeNotifier {
     final raw = prefs.getString(_prefKey);
     if (raw != null) {
       final list = jsonDecode(raw) as List;
-      _notes = list.map((e) => Note.fromJson(e as Map<String, dynamic>)).toList();
+      _notes = list
+          .map((e) => Note.fromJson(e as Map<String, dynamic>))
+          .toList();
       _sort();
       notifyListeners();
     }
@@ -72,7 +77,10 @@ class NotesProvider extends ChangeNotifier {
 
   Future<void> _saveLocal() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, jsonEncode(_notes.map((n) => n.toJson()).toList()));
+    await prefs.setString(
+      _prefKey,
+      jsonEncode(_notes.map((n) => n.toJson()).toList()),
+    );
   }
 
   Future<void> _saveRemote(Note note) async {
@@ -93,7 +101,11 @@ class NotesProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> addNote(String title, String content, {String colorHex = '#FFFFFF'}) async {
+  Future<void> addNote(
+    String title,
+    String content, {
+    String colorHex = '#FFFFFF',
+  }) async {
     final now = DateTime.now();
     final note = Note(
       id: _uuid.v4(),
@@ -142,9 +154,11 @@ class NotesProvider extends ChangeNotifier {
   List<Note> search(String query) {
     final q = query.toLowerCase();
     return _notes
-        .where((n) =>
-            n.title.toLowerCase().contains(q) ||
-            n.content.toLowerCase().contains(q))
+        .where(
+          (n) =>
+              n.title.toLowerCase().contains(q) ||
+              n.content.toLowerCase().contains(q),
+        )
         .toList();
   }
 }

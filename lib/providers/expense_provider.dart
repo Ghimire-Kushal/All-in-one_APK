@@ -28,7 +28,10 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   CollectionReference<Map<String, dynamic>> _col(String uid) =>
-      FirebaseFirestore.instance.collection('users').doc(uid).collection('expenses');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('expenses');
 
   void _onAuthChanged(User? user) async {
     await _fsSub?.cancel();
@@ -62,7 +65,9 @@ class ExpenseProvider extends ChangeNotifier {
     final raw = prefs.getString(_prefKey);
     if (raw != null) {
       final list = jsonDecode(raw) as List;
-      _expenses = list.map((e) => Expense.fromJson(e as Map<String, dynamic>)).toList();
+      _expenses = list
+          .map((e) => Expense.fromJson(e as Map<String, dynamic>))
+          .toList();
       _expenses.sort((a, b) => b.date.compareTo(a.date));
       notifyListeners();
     }
@@ -70,7 +75,10 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future<void> _saveLocal() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, jsonEncode(_expenses.map((e) => e.toJson()).toList()));
+    await prefs.setString(
+      _prefKey,
+      jsonEncode(_expenses.map((e) => e.toJson()).toList()),
+    );
   }
 
   Future<void> _saveRemote(Expense expense) async {
@@ -111,20 +119,23 @@ class ExpenseProvider extends ChangeNotifier {
     await _deleteRemote(id);
   }
 
-  List<Expense> getByMonth(int year, int month) =>
-      _expenses.where((e) => e.date.year == year && e.date.month == month).toList();
+  List<Expense> getByMonth(int year, int month) => _expenses
+      .where((e) => e.date.year == year && e.date.month == month)
+      .toList();
 
   double totalByMonth(int year, int month) =>
-      getByMonth(year, month).fold(0.0, (sum, e) => sum + e.amount);
+      getByMonth(year, month).fold(0.0, (total, e) => total + e.amount);
 
   double get totalToday {
     final now = DateTime.now();
     return _expenses
-        .where((e) =>
-            e.date.year == now.year &&
-            e.date.month == now.month &&
-            e.date.day == now.day)
-        .fold(0.0, (sum, e) => sum + e.amount);
+        .where(
+          (e) =>
+              e.date.year == now.year &&
+              e.date.month == now.month &&
+              e.date.day == now.day,
+        )
+        .fold(0.0, (total, e) => total + e.amount);
   }
 
   Map<ExpenseCategory, double> categoryTotals(int year, int month) {

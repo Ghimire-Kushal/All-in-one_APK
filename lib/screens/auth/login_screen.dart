@@ -41,7 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         final msg = switch (e.code) {
-          'invalid-credential' || 'wrong-password' => 'Incorrect email or password.',
+          'invalid-credential' ||
+          'wrong-password' => 'Incorrect email or password.',
           'user-not-found' => 'No account found with this email.',
           'user-disabled' => 'This account has been disabled.',
           'too-many-requests' => 'Too many attempts. Try again later.',
@@ -59,9 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _forgotPassword() async {
     final email = _emailCtrl.text.trim();
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter your email first')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter your email first')));
       return;
     }
     try {
@@ -77,7 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Failed to send reset email'), backgroundColor: Colors.redAccent),
+          SnackBar(
+            content: Text(e.message ?? 'Failed to send reset email'),
+            backgroundColor: Colors.redAccent,
+          ),
         );
       }
     }
@@ -94,11 +98,19 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              Text('Welcome back 👋',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: cs.onSurface)),
+              Text(
+                'Welcome back 👋',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: cs.onSurface,
+                ),
+              ),
               const SizedBox(height: 8),
-              Text('Sign in to your account',
-                  style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+              Text(
+                'Sign in to your account',
+                style: TextStyle(fontSize: 15, color: Colors.grey[500]),
+              ),
               const SizedBox(height: 40),
               TextField(
                 controller: _emailCtrl,
@@ -116,7 +128,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outlined),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                    icon: Icon(
+                      _obscure
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                 ),
@@ -127,7 +143,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: _forgotPassword,
-                  child: const Text('Forgot Password?', style: TextStyle(fontSize: 13)),
+                  child: const Text(
+                    'Forgot Password?',
+                    style: TextStyle(fontSize: 13),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -137,9 +156,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _loading ? null : _login,
                   child: _loading
                       ? const SizedBox(
-                          height: 20, width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : const Text('Sign In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),

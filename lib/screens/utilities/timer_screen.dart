@@ -80,13 +80,19 @@ class _TimerScreenState extends State<TimerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Timer', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Timer',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 40),
-            if (isPicking) _buildPicker(context, cs) else _buildDisplay(context, cs),
+            if (isPicking)
+              _buildPicker(context, cs)
+            else
+              _buildDisplay(context, cs),
             const SizedBox(height: 40),
             _buildControls(context, cs, isPicking),
           ],
@@ -100,7 +106,10 @@ class _TimerScreenState extends State<TimerScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
         children: [
-          const Text('Set Timer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          const Text(
+            'Set Timer',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -120,7 +129,10 @@ class _TimerScreenState extends State<TimerScreen> {
   Widget _wheel(String label, int maxVal, int value, Function(int) onChange) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 8),
         SizedBox(
           width: 70,
@@ -138,7 +150,9 @@ class _TimerScreenState extends State<TimerScreen> {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
-                    color: i == value ? Theme.of(context).colorScheme.primary : Colors.grey,
+                    color: i == value
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey,
                   ),
                 ),
               ),
@@ -151,7 +165,10 @@ class _TimerScreenState extends State<TimerScreen> {
 
   Widget _colon() => const Padding(
     padding: EdgeInsets.only(top: 20),
-    child: Text(':', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
+    child: Text(
+      ':',
+      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+    ),
   );
 
   Widget _buildDisplay(BuildContext context, ColorScheme cs) {
@@ -181,7 +198,10 @@ class _TimerScreenState extends State<TimerScreen> {
               ),
             ),
             if (!_finished)
-              Text('remaining', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+              Text(
+                'remaining',
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              ),
           ],
         ),
       ],
@@ -192,8 +212,7 @@ class _TimerScreenState extends State<TimerScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (!isPicking)
-          _btn(Icons.refresh_rounded, cs.error, _reset),
+        if (!isPicking) _btn(Icons.refresh_rounded, cs.error, _reset),
         const SizedBox(width: 20),
         _btn(
           _running ? Icons.pause_rounded : Icons.play_arrow_rounded,
@@ -217,7 +236,12 @@ class _TimerScreenState extends State<TimerScreen> {
     );
   }
 
-  Widget _btn(IconData icon, Color color, VoidCallback? onTap, {bool large = false}) {
+  Widget _btn(
+    IconData icon,
+    Color color,
+    VoidCallback? onTap, {
+    bool large = false,
+  }) {
     final size = large ? 68.0 : 52.0;
     return GestureDetector(
       onTap: onTap,
@@ -226,7 +250,7 @@ class _TimerScreenState extends State<TimerScreen> {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: onTap != null ? color : color.withOpacity(0.3),
+          color: onTap != null ? color : color.withValues(alpha: 0.3),
         ),
         child: Icon(icon, color: Colors.white, size: large ? 30 : 22),
       ),

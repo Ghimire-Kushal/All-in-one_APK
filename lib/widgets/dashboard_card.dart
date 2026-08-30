@@ -43,14 +43,17 @@ class _DashboardCardState extends State<DashboardCard>
   void initState() {
     super.initState();
     _anim = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
     _fade = CurvedAnimation(parent: _anim, curve: Curves.easeOut);
-    _slide = Tween(begin: const Offset(0, 0.08), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _anim, curve: Curves.easeOut));
+    _slide = Tween(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOut));
     _anim.forward();
 
-    _clockTimer = Timer.periodic(
-        const Duration(seconds: 1), (_) {
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() => _now = DateTime.now());
     });
 
@@ -82,8 +85,9 @@ class _DashboardCardState extends State<DashboardCard>
       }
 
       final pos = await Geolocator.getCurrentPosition(
-        locationSettings:
-            const LocationSettings(accuracy: LocationAccuracy.low),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.low,
+        ),
       ).timeout(const Duration(seconds: 15));
 
       if (_kWeatherApiKey == 'YOUR_OPENWEATHER_API_KEY') {
@@ -96,15 +100,23 @@ class _DashboardCardState extends State<DashboardCard>
 
       // One Call API 3.0 + Geocoding API in parallel
       final results = await Future.wait([
-        http.get(Uri.parse(
-          'https://api.openweathermap.org/data/3.0/onecall'
-          '?lat=$lat&lon=$lon&exclude=minutely,hourly,daily,alerts'
-          '&appid=$_kWeatherApiKey&units=metric',
-        )).timeout(const Duration(seconds: 10)),
-        http.get(Uri.parse(
-          'https://api.openweathermap.org/geo/1.0/reverse'
-          '?lat=$lat&lon=$lon&limit=1&appid=$_kWeatherApiKey',
-        )).timeout(const Duration(seconds: 10)),
+        http
+            .get(
+              Uri.parse(
+                'https://api.openweathermap.org/data/3.0/onecall'
+                '?lat=$lat&lon=$lon&exclude=minutely,hourly,daily,alerts'
+                '&appid=$_kWeatherApiKey&units=metric',
+              ),
+            )
+            .timeout(const Duration(seconds: 10)),
+        http
+            .get(
+              Uri.parse(
+                'https://api.openweathermap.org/geo/1.0/reverse'
+                '?lat=$lat&lon=$lon&limit=1&appid=$_kWeatherApiKey',
+              ),
+            )
+            .timeout(const Duration(seconds: 10)),
       ]);
 
       if (!mounted) return;
@@ -127,7 +139,8 @@ class _DashboardCardState extends State<DashboardCard>
           _feelsLike = (current['feels_like'] as num).round();
           _humidity = current['humidity'] as int;
           _condition = (current['weather'] as List).first['main'] as String;
-          _description = (current['weather'] as List).first['description'] as String;
+          _description =
+              (current['weather'] as List).first['description'] as String;
           _city = cityName;
           _weatherLoading = false;
         });
@@ -145,11 +158,11 @@ class _DashboardCardState extends State<DashboardCard>
 
   String _greeting() {
     final h = _now.hour;
-    if (h < 5) return 'Good Night';
-    if (h < 12) return 'Good Morning';
-    if (h < 17) return 'Good Afternoon';
-    if (h < 21) return 'Good Evening';
-    return 'Good Night';
+    if (h < 5) return 'Good night';
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    if (h < 21) return 'Good evening';
+    return 'Good evening';
   }
 
   IconData _greetingIcon() {
@@ -161,37 +174,21 @@ class _DashboardCardState extends State<DashboardCard>
   }
 
   ({IconData icon, Color color}) get _weatherIconData => switch (_condition) {
-        'Clear' => (
-            icon: Icons.wb_sunny_rounded,
-            color: const Color(0xFFFFB300)
-          ),
-        'Clouds' => (
-            icon: Icons.cloud_rounded,
-            color: const Color(0xFF90A4AE)
-          ),
-        'Rain' => (
-            icon: Icons.water_drop_rounded,
-            color: const Color(0xFF42A5F5)
-          ),
-        'Drizzle' => (
-            icon: Icons.grain_rounded,
-            color: const Color(0xFF64B5F6)
-          ),
-        'Thunderstorm' => (
-            icon: Icons.thunderstorm_rounded,
-            color: const Color(0xFFCE93D8)
-          ),
-        'Snow' => (
-            icon: Icons.ac_unit_rounded,
-            color: const Color(0xFFB0BEC5)
-          ),
-        'Mist' ||
-        'Fog' ||
-        'Haze' ||
-        'Smoke' =>
-          (icon: Icons.cloud_queue_rounded, color: const Color(0xFFB0BEC5)),
-        _ => (icon: Icons.wb_cloudy_rounded, color: const Color(0xFF90A4AE)),
-      };
+    'Clear' => (icon: Icons.wb_sunny_rounded, color: const Color(0xFFFFB300)),
+    'Clouds' => (icon: Icons.cloud_rounded, color: const Color(0xFF90A4AE)),
+    'Rain' => (icon: Icons.water_drop_rounded, color: const Color(0xFF42A5F5)),
+    'Drizzle' => (icon: Icons.grain_rounded, color: const Color(0xFF64B5F6)),
+    'Thunderstorm' => (
+      icon: Icons.thunderstorm_rounded,
+      color: const Color(0xFFCE93D8),
+    ),
+    'Snow' => (icon: Icons.ac_unit_rounded, color: const Color(0xFFB0BEC5)),
+    'Mist' || 'Fog' || 'Haze' || 'Smoke' => (
+      icon: Icons.cloud_queue_rounded,
+      color: const Color(0xFFB0BEC5),
+    ),
+    _ => (icon: Icons.wb_cloudy_rounded, color: const Color(0xFF90A4AE)),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -202,8 +199,10 @@ class _DashboardCardState extends State<DashboardCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final nepaliNow = NepaliDateTime.now();
-    final nepaliDate =
-        NepaliDateFormat('d MMMM y', Language.nepali).format(nepaliNow);
+    final nepaliDate = NepaliDateFormat(
+      'd MMMM y',
+      Language.nepali,
+    ).format(nepaliNow);
 
     return FadeTransition(
       opacity: _fade,
@@ -223,8 +222,9 @@ class _DashboardCardState extends State<DashboardCard>
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF3F51B5)
-                      .withValues(alpha: isDark ? 0.18 : 0.32),
+                  color: const Color(
+                    0xFF3F51B5,
+                  ).withValues(alpha: isDark ? 0.18 : 0.32),
                   blurRadius: 24,
                   offset: const Offset(0, 8),
                 ),
@@ -248,8 +248,9 @@ class _DashboardCardState extends State<DashboardCard>
                   weatherIconData: _weatherIconData,
                 ),
                 Container(
-                    height: 1,
-                    color: Colors.white.withValues(alpha: 0.12)),
+                  height: 1,
+                  color: Colors.white.withValues(alpha: 0.12),
+                ),
                 _StatsRow(
                   notes: notes,
                   tasks: tasks,
@@ -386,7 +387,9 @@ class _TopSection extends StatelessWidget {
           width: 16,
           height: 16,
           child: CircularProgressIndicator(
-              strokeWidth: 2, color: Colors.white30),
+            strokeWidth: 2,
+            color: Colors.white30,
+          ),
         ),
       );
     }
@@ -408,8 +411,11 @@ class _TopSection extends StatelessWidget {
             color: weatherIconData.color.withValues(alpha: 0.18),
             shape: BoxShape.circle,
           ),
-          child: Icon(weatherIconData.icon,
-              color: weatherIconData.color, size: 28),
+          child: Icon(
+            weatherIconData.icon,
+            color: weatherIconData.color,
+            size: 28,
+          ),
         ),
         const SizedBox(height: 6),
 
@@ -430,7 +436,10 @@ class _TopSection extends StatelessWidget {
           Text(
             displayDesc,
             style: const TextStyle(
-                color: Colors.white60, fontSize: 10.5, fontWeight: FontWeight.w500),
+              color: Colors.white60,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w500,
+            ),
             textAlign: TextAlign.end,
           ),
 
@@ -441,22 +450,30 @@ class _TopSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (feelsLike != null) ...[
-                const Icon(Icons.thermostat_rounded,
-                    color: Colors.white38, size: 10),
+                const Icon(
+                  Icons.thermostat_rounded,
+                  color: Colors.white38,
+                  size: 10,
+                ),
                 const SizedBox(width: 2),
-                Text('$feelsLike°',
-                    style: const TextStyle(
-                        color: Colors.white38, fontSize: 10)),
+                Text(
+                  '$feelsLike°',
+                  style: const TextStyle(color: Colors.white38, fontSize: 10),
+                ),
               ],
               if (feelsLike != null && humidity != null)
                 const SizedBox(width: 6),
               if (humidity != null) ...[
-                const Icon(Icons.water_drop_rounded,
-                    color: Colors.white38, size: 10),
+                const Icon(
+                  Icons.water_drop_rounded,
+                  color: Colors.white38,
+                  size: 10,
+                ),
                 const SizedBox(width: 2),
-                Text('$humidity%',
-                    style: const TextStyle(
-                        color: Colors.white38, fontSize: 10)),
+                Text(
+                  '$humidity%',
+                  style: const TextStyle(color: Colors.white38, fontSize: 10),
+                ),
               ],
             ],
           ),
@@ -468,13 +485,15 @@ class _TopSection extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.location_on_rounded,
-                  color: Colors.white38, size: 11),
+              const Icon(
+                Icons.location_on_rounded,
+                color: Colors.white38,
+                size: 11,
+              ),
               const SizedBox(width: 2),
               Text(
                 city!,
-                style:
-                    const TextStyle(color: Colors.white38, fontSize: 10.5),
+                style: const TextStyle(color: Colors.white38, fontSize: 10.5),
               ),
             ],
           ),
@@ -491,15 +510,17 @@ class _StatsRow extends StatelessWidget {
   final int tasks;
   final double todayExpense;
 
-  const _StatsRow(
-      {required this.notes,
-      required this.tasks,
-      required this.todayExpense});
+  const _StatsRow({
+    required this.notes,
+    required this.tasks,
+    required this.todayExpense,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final expenseStr =
-        todayExpense >= 1000 ? 'Rs${(todayExpense / 1000).toStringAsFixed(1)}k' : 'Rs${todayExpense.toInt()}';
+    final expenseStr = todayExpense >= 1000
+        ? 'Rs ${(todayExpense / 1000).toStringAsFixed(1)}k'
+        : 'Rs ${todayExpense.toInt()}';
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 14, 12, 18),
       child: Row(
@@ -536,7 +557,10 @@ class _StatsRow extends StatelessWidget {
   }
 
   Widget _vDivider() => Container(
-      width: 1, height: 34, color: Colors.white.withValues(alpha: 0.15));
+    width: 1,
+    height: 34,
+    color: Colors.white.withValues(alpha: 0.15),
+  );
 }
 
 class _StatItem extends StatelessWidget {
@@ -545,11 +569,12 @@ class _StatItem extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _StatItem(
-      {required this.icon,
-      required this.value,
-      required this.label,
-      required this.color});
+  const _StatItem({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {

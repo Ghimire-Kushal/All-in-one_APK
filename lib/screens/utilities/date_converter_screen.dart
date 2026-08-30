@@ -57,7 +57,10 @@ class _DateConverterScreenState extends State<DateConverterScreen>
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Date Converter', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Date Converter',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         bottom: TabBar(
           controller: _tab,
           tabs: const [
@@ -84,7 +87,10 @@ class _DateConverterScreenState extends State<DateConverterScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Select English Date (AD)', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Select English Date (AD)',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 12),
           _datePicker(
             DateFormat('MMMM d, yyyy').format(_adDate),
@@ -105,7 +111,10 @@ class _DateConverterScreenState extends State<DateConverterScreen>
           ),
           const SizedBox(height: 32),
           if (_bsResult != null) ...[
-            const Text('Nepali Date (BS)', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Nepali Date (BS)',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 12),
             _resultCard(
               '${_bsResult!.year} - ${_bsResult!.month.toString().padLeft(2, '0')} - ${_bsResult!.day.toString().padLeft(2, '0')}',
@@ -125,15 +134,30 @@ class _DateConverterScreenState extends State<DateConverterScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter Nepali Date (BS)', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Enter Nepali Date (BS)',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _numField('Year', _bsYear, (v) => _bsYear = v, 2070, 2090)),
+              Expanded(
+                child: _numField(
+                  'Year',
+                  _bsYear,
+                  (v) => _bsYear = v,
+                  2070,
+                  2090,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _numField('Month', _bsMonth, (v) => _bsMonth = v, 1, 12)),
+              Expanded(
+                child: _numField('Month', _bsMonth, (v) => _bsMonth = v, 1, 12),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _numField('Day', _bsDay, (v) => _bsDay = v, 1, 32)),
+              Expanded(
+                child: _numField('Day', _bsDay, (v) => _bsDay = v, 1, 32),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -147,7 +171,10 @@ class _DateConverterScreenState extends State<DateConverterScreen>
           ),
           const SizedBox(height: 32),
           if (_adResult != null) ...[
-            const Text('English Date (AD)', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'English Date (AD)',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 12),
             _resultCard(
               DateFormat('MMMM d, yyyy').format(_adResult!),
@@ -169,7 +196,10 @@ class _DateConverterScreenState extends State<DateConverterScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Today\'s Date', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Today\'s Date',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 16),
           _resultCard(
             DateFormat('EEEE, MMMM d, yyyy').format(now),
@@ -196,20 +226,28 @@ class _DateConverterScreenState extends State<DateConverterScreen>
     );
   }
 
-  Widget _datePicker(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _datePicker(
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          border: Border.all(color: color.withOpacity(0.4)),
+          border: Border.all(color: color.withValues(alpha: 0.4)),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 12),
-            Text(label, style: TextStyle(fontWeight: FontWeight.w500, color: color)),
+            Text(
+              label,
+              style: TextStyle(fontWeight: FontWeight.w500, color: color),
+            ),
             const Spacer(),
             Icon(Icons.arrow_drop_down_rounded, color: color),
           ],
@@ -222,26 +260,47 @@ class _DateConverterScreenState extends State<DateConverterScreen>
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(main,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: fg)),
+          Text(
+            main,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: fg,
+            ),
+          ),
           const SizedBox(height: 6),
-          Text(sub, style: TextStyle(fontSize: 12, color: fg.withOpacity(0.7))),
+          Text(
+            sub,
+            style: TextStyle(fontSize: 12, color: fg.withValues(alpha: 0.7)),
+          ),
         ],
       ),
     );
   }
 
-  Widget _numField(String label, int value, Function(int) onChanged, int min, int max) {
+  Widget _numField(
+    String label,
+    int value,
+    Function(int) onChanged,
+    int min,
+    int max,
+  ) {
     final controller = TextEditingController(text: '$value');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 6),
         TextField(
           controller: controller,

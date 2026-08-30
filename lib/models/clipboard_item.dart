@@ -12,16 +12,16 @@ class ClipboardItem {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'text': text,
-        'isPinned': isPinned,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'text': text,
+    'isPinned': isPinned,
+    'createdAt': createdAt.toIso8601String(),
+  };
 
   factory ClipboardItem.fromJson(Map<String, dynamic> json) => ClipboardItem(
-        id: json['id'] as String,
-        text: json['text'] as String,
-        isPinned: json['isPinned'] as bool? ?? false,
-        createdAt: DateTime.parse(json['createdAt'] as String),
-      );
+    id: json['id'] as String,
+    text: json['text'] as String,
+    isPinned: json['isPinned'] as bool? ?? false,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+  );
 }

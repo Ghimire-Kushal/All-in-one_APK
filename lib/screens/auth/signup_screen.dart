@@ -45,9 +45,9 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Signup failed')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Signup failed')));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -64,11 +64,15 @@ class _SignupScreenState extends State<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              const Text('Create account 🎓',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800)),
+              const Text(
+                'Create account 🎓',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+              ),
               const SizedBox(height: 8),
-              Text('Join to unlock all features',
-                  style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+              Text(
+                'Join to unlock all features',
+                style: TextStyle(fontSize: 15, color: Colors.grey[500]),
+              ),
               const SizedBox(height: 40),
               TextField(
                 controller: _nameCtrl,
@@ -94,7 +98,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   labelText: 'Password',
                   prefixIcon: const Icon(Icons.lock_outlined),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                    icon: Icon(
+                      _obscure
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                 ),
@@ -107,9 +115,20 @@ class _SignupScreenState extends State<SignupScreen> {
                   onPressed: _loading ? null : _signup,
                   child: _loading
                       ? const SizedBox(
-                          height: 20, width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : const Text('Create Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Create Account',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),

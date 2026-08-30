@@ -18,13 +18,19 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
   String _format(Duration d) {
     final min = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final sec = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    final ms = (d.inMilliseconds.remainder(1000) ~/ 10).toString().padLeft(2, '0');
+    final ms = (d.inMilliseconds.remainder(1000) ~/ 10).toString().padLeft(
+      2,
+      '0',
+    );
     return '${d.inHours > 0 ? '${d.inHours}:' : ''}$min:$sec.$ms';
   }
 
   void _start() {
     _stopwatch.start();
-    _timer = Timer.periodic(const Duration(milliseconds: 30), (_) => setState(() {}));
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 30),
+      (_) => setState(() {}),
+    );
   }
 
   void _pause() {
@@ -56,7 +62,10 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stopwatch', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Stopwatch',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: Column(
         children: [
@@ -70,7 +79,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                 color: cs.primaryContainer,
                 boxShadow: [
                   BoxShadow(
-                    color: cs.primary.withOpacity(0.2),
+                    color: cs.primary.withValues(alpha: 0.2),
                     blurRadius: 30,
                     spreadRadius: 5,
                   ),
@@ -93,7 +102,11 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _circleBtn(Icons.flag_rounded, cs.secondary, running ? _lap : null),
+              _circleBtn(
+                Icons.flag_rounded,
+                cs.secondary,
+                running ? _lap : null,
+              ),
               const SizedBox(width: 20),
               _circleBtn(
                 running ? Icons.pause_rounded : Icons.play_arrow_rounded,
@@ -102,7 +115,11 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                 large: true,
               ),
               const SizedBox(width: 20),
-              _circleBtn(Icons.refresh_rounded, cs.error, !running && _stopwatch.elapsed > Duration.zero ? _reset : null),
+              _circleBtn(
+                Icons.refresh_rounded,
+                cs.error,
+                !running && _stopwatch.elapsed > Duration.zero ? _reset : null,
+              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -115,10 +132,18 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                   leading: CircleAvatar(
                     radius: 14,
                     backgroundColor: cs.primaryContainer,
-                    child: Text('${_laps.length - i}',
-                        style: TextStyle(fontSize: 11, color: cs.onPrimaryContainer)),
+                    child: Text(
+                      '${_laps.length - i}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: cs.onPrimaryContainer,
+                      ),
+                    ),
                   ),
-                  title: Text(_laps[i], style: const TextStyle(fontFamily: 'monospace')),
+                  title: Text(
+                    _laps[i],
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
                 ),
               ),
             ),
@@ -128,7 +153,12 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
     );
   }
 
-  Widget _circleBtn(IconData icon, Color color, VoidCallback? onTap, {bool large = false}) {
+  Widget _circleBtn(
+    IconData icon,
+    Color color,
+    VoidCallback? onTap, {
+    bool large = false,
+  }) {
     final size = large ? 68.0 : 52.0;
     return GestureDetector(
       onTap: onTap,
@@ -138,9 +168,15 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: onTap != null ? color : color.withOpacity(0.3),
+          color: onTap != null ? color : color.withValues(alpha: 0.3),
           boxShadow: onTap != null
-              ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))]
+              ? [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
               : [],
         ),
         child: Icon(icon, color: Colors.white, size: large ? 30 : 22),

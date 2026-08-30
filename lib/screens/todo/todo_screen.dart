@@ -33,14 +33,15 @@ class _TodoScreenState extends State<TodoScreen>
     final provider = context.watch<TodoProvider>();
     return Scaffold(
       appBar: AppBar(
-        title:
-            const Text('To-Do', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'To-Do',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           if (provider.completed.isNotEmpty)
             TextButton(
               onPressed: () => provider.clearCompleted(),
-              child:
-                  const Text('Clear done', style: TextStyle(fontSize: 12)),
+              child: const Text('Clear done', style: TextStyle(fontSize: 12)),
             ),
         ],
         bottom: TabBar(
@@ -72,11 +73,16 @@ class _TodoScreenState extends State<TodoScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(isDone ? Icons.task_alt_rounded : Icons.checklist_rounded,
-                size: 60, color: Colors.grey[300]),
+            Icon(
+              isDone ? Icons.task_alt_rounded : Icons.checklist_rounded,
+              size: 60,
+              color: Colors.grey[300],
+            ),
             const SizedBox(height: 12),
-            Text(isDone ? 'No completed tasks' : 'No pending tasks',
-                style: TextStyle(color: Colors.grey[500])),
+            Text(
+              isDone ? 'No completed tasks' : 'No pending tasks',
+              style: TextStyle(color: Colors.grey[500]),
+            ),
           ],
         ),
       );
@@ -98,7 +104,8 @@ class _TodoScreenState extends State<TodoScreen>
     final hasReminder =
         task.reminderTime != null && task.reminderTime!.isAfter(DateTime.now());
     final reminderPast =
-        task.reminderTime != null && task.reminderTime!.isBefore(DateTime.now());
+        task.reminderTime != null &&
+        task.reminderTime!.isBefore(DateTime.now());
 
     return Dismissible(
       key: Key(task.id),
@@ -130,35 +137,38 @@ class _TodoScreenState extends State<TodoScreen>
             ],
           ),
           child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 4,
+            ),
             leading: GestureDetector(
-              onTap: () =>
-                  context.read<TodoProvider>().toggleComplete(task.id),
+              onTap: () => context.read<TodoProvider>().toggleComplete(task.id),
               child: Container(
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: task.isCompleted
-                        ? Colors.green
-                        : Colors.grey[400]!,
+                    color: task.isCompleted ? Colors.green : Colors.grey[400]!,
                     width: 2,
                   ),
                   color: task.isCompleted ? Colors.green : Colors.transparent,
                 ),
                 child: task.isCompleted
-                    ? const Icon(Icons.check_rounded,
-                        size: 14, color: Colors.white)
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      )
                     : null,
               ),
             ),
             title: Text(
               task.title,
               style: TextStyle(
-                decoration:
-                    task.isCompleted ? TextDecoration.lineThrough : null,
+                decoration: task.isCompleted
+                    ? TextDecoration.lineThrough
+                    : null,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
                 color: task.isCompleted ? Colors.grey : null,
@@ -169,9 +179,10 @@ class _TodoScreenState extends State<TodoScreen>
               children: [
                 if (task.description.isNotEmpty) ...[
                   const SizedBox(height: 2),
-                  Text(task.description,
-                      style: TextStyle(
-                          fontSize: 12, color: Colors.grey[500])),
+                  Text(
+                    task.description,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  ),
                 ],
                 const SizedBox(height: 5),
                 Wrap(
@@ -197,8 +208,9 @@ class _TodoScreenState extends State<TodoScreen>
                             ? Icons.notifications_active_rounded
                             : Icons.notifications_off_rounded,
                         label: hasReminder
-                            ? DateFormat('MMM d, h:mm a')
-                                .format(task.reminderTime!)
+                            ? DateFormat(
+                                'MMM d, h:mm a',
+                              ).format(task.reminderTime!)
                             : 'Passed',
                         color: hasReminder
                             ? Colors.deepPurple
@@ -233,9 +245,14 @@ class _TodoScreenState extends State<TodoScreen>
             Icon(icon, size: 10, color: color),
             const SizedBox(width: 3),
           ],
-          Text(label,
-              style: TextStyle(
-                  fontSize: 10, color: color, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -296,7 +313,8 @@ class _TaskSheetState extends State<_TaskSheet> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (_) => _ReminderPicker(
         current: _reminderTime,
         onSelected: (dt) => setState(() => _reminderTime = dt),
@@ -356,9 +374,10 @@ class _TaskSheetState extends State<_TaskSheet> {
             ),
           ),
           const SizedBox(height: 16),
-          Text(widget.isEdit ? 'Edit Task' : 'New Task',
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          Text(
+            widget.isEdit ? 'Edit Task' : 'New Task',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 16),
 
           // Title
@@ -385,8 +404,10 @@ class _TaskSheetState extends State<_TaskSheet> {
           const SizedBox(height: 16),
 
           // Priority
-          const Text('Priority',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          const Text(
+            'Priority',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -414,7 +435,8 @@ class _TaskSheetState extends State<_TaskSheet> {
                     final picked = await showDatePicker(
                       context: context,
                       initialDate:
-                          _dueDate ?? DateTime.now().add(const Duration(days: 1)),
+                          _dueDate ??
+                          DateTime.now().add(const Duration(days: 1)),
                       firstDate: DateTime.now(),
                       lastDate: DateTime.now().add(const Duration(days: 365)),
                     );
@@ -449,10 +471,13 @@ class _TaskSheetState extends State<_TaskSheet> {
             width: double.infinity,
             child: FilledButton.icon(
               onPressed: _submit,
-              icon: Icon(widget.isEdit ? Icons.save_rounded : Icons.add_rounded),
+              icon: Icon(
+                widget.isEdit ? Icons.save_rounded : Icons.add_rounded,
+              ),
               label: Text(widget.isEdit ? 'Save Changes' : 'Add Task'),
               style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14)),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
             ),
           ),
         ],
@@ -467,16 +492,20 @@ class _TaskSheetState extends State<_TaskSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.15) : Colors.transparent,
+          color: isSelected
+              ? color.withValues(alpha: 0.15)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: isSelected ? color : Colors.grey[300]!),
+          border: Border.all(color: isSelected ? color : Colors.grey[300]!),
         ),
-        child: Text(label,
-            style: TextStyle(
-                color: isSelected ? color : Colors.grey,
-                fontWeight: FontWeight.w600,
-                fontSize: 12)),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? color : Colors.grey,
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }
@@ -499,7 +528,8 @@ class _TaskSheetState extends State<_TaskSheet> {
               : Colors.grey.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: active ? color.withValues(alpha: 0.4) : Colors.grey[300]!),
+            color: active ? color.withValues(alpha: 0.4) : Colors.grey[300]!,
+          ),
         ),
         child: Row(
           children: [
@@ -509,10 +539,10 @@ class _TaskSheetState extends State<_TaskSheet> {
               child: Text(
                 label,
                 style: TextStyle(
-                    fontSize: 11,
-                    color: active ? color : Colors.grey[600],
-                    fontWeight:
-                        active ? FontWeight.w600 : FontWeight.normal),
+                  fontSize: 11,
+                  color: active ? color : Colors.grey[600],
+                  fontWeight: active ? FontWeight.w600 : FontWeight.normal,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -520,8 +550,11 @@ class _TaskSheetState extends State<_TaskSheet> {
             if (onClear != null)
               GestureDetector(
                 onTap: onClear,
-                child: Icon(Icons.close_rounded,
-                    size: 14, color: color.withValues(alpha: 0.6)),
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 14,
+                  color: color.withValues(alpha: 0.6),
+                ),
               ),
           ],
         ),
@@ -543,27 +576,42 @@ class _ReminderPicker extends StatelessWidget {
     final now = DateTime.now();
 
     final quickOptions = [
-      _QuickOption('In 30 minutes', Icons.timer_rounded, Colors.teal,
-          now.add(const Duration(minutes: 30))),
-      _QuickOption('In 1 hour', Icons.schedule_rounded, Colors.blue,
-          now.add(const Duration(hours: 1))),
-      _QuickOption('In 3 hours', Icons.access_time_rounded, Colors.indigo,
-          now.add(const Duration(hours: 3))),
       _QuickOption(
-          'Tonight 8 PM',
-          Icons.nights_stay_rounded,
-          Colors.deepPurple,
-          DateTime(now.year, now.month, now.day, 20, 0)),
+        'In 30 minutes',
+        Icons.timer_rounded,
+        Colors.teal,
+        now.add(const Duration(minutes: 30)),
+      ),
       _QuickOption(
-          'Tomorrow 9 AM',
-          Icons.wb_sunny_rounded,
-          Colors.orange,
-          DateTime(now.year, now.month, now.day + 1, 9, 0)),
+        'In 1 hour',
+        Icons.schedule_rounded,
+        Colors.blue,
+        now.add(const Duration(hours: 1)),
+      ),
       _QuickOption(
-          'Tomorrow 6 PM',
-          Icons.wb_twilight_rounded,
-          Colors.amber,
-          DateTime(now.year, now.month, now.day + 1, 18, 0)),
+        'In 3 hours',
+        Icons.access_time_rounded,
+        Colors.indigo,
+        now.add(const Duration(hours: 3)),
+      ),
+      _QuickOption(
+        'Tonight 8 PM',
+        Icons.nights_stay_rounded,
+        Colors.deepPurple,
+        DateTime(now.year, now.month, now.day, 20, 0),
+      ),
+      _QuickOption(
+        'Tomorrow 9 AM',
+        Icons.wb_sunny_rounded,
+        Colors.orange,
+        DateTime(now.year, now.month, now.day + 1, 9, 0),
+      ),
+      _QuickOption(
+        'Tomorrow 6 PM',
+        Icons.wb_twilight_rounded,
+        Colors.amber,
+        DateTime(now.year, now.month, now.day + 1, 18, 0),
+      ),
     ];
 
     return Padding(
@@ -577,19 +625,24 @@ class _ReminderPicker extends StatelessWidget {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(4)),
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(Icons.notifications_rounded,
-                  color: Colors.deepPurple, size: 20),
+              const Icon(
+                Icons.notifications_rounded,
+                color: Colors.deepPurple,
+                size: 20,
+              ),
               const SizedBox(width: 8),
-              const Text('Set Reminder',
-                  style:
-                      TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+              const Text(
+                'Set Reminder',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+              ),
               const Spacer(),
               if (current != null)
                 TextButton(
@@ -597,8 +650,10 @@ class _ReminderPicker extends StatelessWidget {
                     onSelected(null);
                     Navigator.pop(context);
                   },
-                  child: const Text('Remove',
-                      style: TextStyle(color: Colors.red, fontSize: 12)),
+                  child: const Text(
+                    'Remove',
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
                 ),
             ],
           ),
@@ -617,7 +672,8 @@ class _ReminderPicker extends StatelessWidget {
             itemCount: quickOptions.length,
             itemBuilder: (_, i) {
               final opt = quickOptions[i];
-              final isSelected = current != null &&
+              final isSelected =
+                  current != null &&
                   current!.difference(opt.time).abs() <
                       const Duration(minutes: 1);
               final isPast = opt.time.isBefore(DateTime.now());
@@ -633,24 +689,28 @@ class _ReminderPicker extends StatelessWidget {
                     color: isPast
                         ? Colors.grey.withValues(alpha: 0.06)
                         : isSelected
-                            ? opt.color.withValues(alpha: 0.15)
-                            : opt.color.withValues(alpha: 0.08),
+                        ? opt.color.withValues(alpha: 0.15)
+                        : opt.color.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isPast
                           ? Colors.grey.withValues(alpha: 0.2)
                           : isSelected
-                              ? opt.color
-                              : opt.color.withValues(alpha: 0.25),
+                          ? opt.color
+                          : opt.color.withValues(alpha: 0.25),
                     ),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
-                      Icon(opt.icon,
-                          size: 15,
-                          color: isPast ? Colors.grey : opt.color),
+                      Icon(
+                        opt.icon,
+                        size: 15,
+                        color: isPast ? Colors.grey : opt.color,
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -681,11 +741,11 @@ class _ReminderPicker extends StatelessWidget {
               label: const Text('Custom date & time'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.deepPurple,
-                side: const BorderSide(
-                    color: Colors.deepPurple, width: 1),
+                side: const BorderSide(color: Colors.deepPurple, width: 1),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () async {
                 Navigator.pop(context);
@@ -714,8 +774,13 @@ class _ReminderPicker extends StatelessWidget {
     );
     if (time == null) return;
 
-    final dt =
-        DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    final dt = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
     onSelected(dt);
   }
 }

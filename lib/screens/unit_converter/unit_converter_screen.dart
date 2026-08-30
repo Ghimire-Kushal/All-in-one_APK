@@ -17,33 +17,73 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
   double? _result;
 
   static const _units = <UnitCategory, List<String>>{
-    UnitCategory.length: ['Meter', 'Kilometer', 'Mile', 'Foot', 'Inch', 'Centimeter', 'Millimeter'],
+    UnitCategory.length: [
+      'Meter',
+      'Kilometer',
+      'Mile',
+      'Foot',
+      'Inch',
+      'Centimeter',
+      'Millimeter',
+    ],
     UnitCategory.weight: ['Kilogram', 'Gram', 'Pound', 'Ounce', 'Ton'],
     UnitCategory.temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
-    UnitCategory.storage: ['Byte', 'Kilobyte', 'Megabyte', 'Gigabyte', 'Terabyte'],
-    UnitCategory.area: ['Square Meter', 'Square Kilometer', 'Square Mile', 'Acre', 'Hectare', 'Square Foot'],
+    UnitCategory.storage: [
+      'Byte',
+      'Kilobyte',
+      'Megabyte',
+      'Gigabyte',
+      'Terabyte',
+    ],
+    UnitCategory.area: [
+      'Square Meter',
+      'Square Kilometer',
+      'Square Mile',
+      'Acre',
+      'Hectare',
+      'Square Foot',
+    ],
     UnitCategory.speed: ['m/s', 'km/h', 'mph', 'Knot'],
   };
 
   // All convert TO base unit, then FROM base unit
   static const _toBase = <UnitCategory, Map<String, double>>{
     UnitCategory.length: {
-      'Meter': 1, 'Kilometer': 1000, 'Mile': 1609.34, 'Foot': 0.3048,
-      'Inch': 0.0254, 'Centimeter': 0.01, 'Millimeter': 0.001,
+      'Meter': 1,
+      'Kilometer': 1000,
+      'Mile': 1609.34,
+      'Foot': 0.3048,
+      'Inch': 0.0254,
+      'Centimeter': 0.01,
+      'Millimeter': 0.001,
     },
     UnitCategory.weight: {
-      'Kilogram': 1, 'Gram': 0.001, 'Pound': 0.453592, 'Ounce': 0.0283495, 'Ton': 1000,
+      'Kilogram': 1,
+      'Gram': 0.001,
+      'Pound': 0.453592,
+      'Ounce': 0.0283495,
+      'Ton': 1000,
     },
     UnitCategory.storage: {
-      'Byte': 1, 'Kilobyte': 1024, 'Megabyte': 1048576,
-      'Gigabyte': 1073741824, 'Terabyte': 1099511627776,
+      'Byte': 1,
+      'Kilobyte': 1024,
+      'Megabyte': 1048576,
+      'Gigabyte': 1073741824,
+      'Terabyte': 1099511627776,
     },
     UnitCategory.area: {
-      'Square Meter': 1, 'Square Kilometer': 1e6, 'Square Mile': 2.58999e6,
-      'Acre': 4046.86, 'Hectare': 10000, 'Square Foot': 0.092903,
+      'Square Meter': 1,
+      'Square Kilometer': 1e6,
+      'Square Mile': 2.58999e6,
+      'Acre': 4046.86,
+      'Hectare': 10000,
+      'Square Foot': 0.092903,
     },
     UnitCategory.speed: {
-      'm/s': 1, 'km/h': 0.277778, 'mph': 0.44704, 'Knot': 0.514444,
+      'm/s': 1,
+      'km/h': 0.277778,
+      'mph': 0.44704,
+      'Knot': 0.514444,
     },
   };
 
@@ -79,14 +119,22 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
   double _convertTemp(double val, String from, String to) {
     double celsius;
     switch (from) {
-      case 'Fahrenheit': celsius = (val - 32) * 5 / 9; break;
-      case 'Kelvin': celsius = val - 273.15; break;
-      default: celsius = val;
+      case 'Fahrenheit':
+        celsius = (val - 32) * 5 / 9;
+        break;
+      case 'Kelvin':
+        celsius = val - 273.15;
+        break;
+      default:
+        celsius = val;
     }
     switch (to) {
-      case 'Fahrenheit': return celsius * 9 / 5 + 32;
-      case 'Kelvin': return celsius + 273.15;
-      default: return celsius;
+      case 'Fahrenheit':
+        return celsius * 9 / 5 + 32;
+      case 'Kelvin':
+        return celsius + 273.15;
+      default:
+        return celsius;
     }
   }
 
@@ -97,14 +145,20 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Unit Converter', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Unit Converter',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Category', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Category',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -119,9 +173,14 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                         _initCategory();
                       }),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          color: isSelected ? cs.primaryContainer : Colors.transparent,
+                          color: isSelected
+                              ? cs.primaryContainer
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isSelected ? cs.primary : Colors.grey[300]!,
@@ -144,7 +203,9 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
             const SizedBox(height: 24),
             TextField(
               controller: _inputCtrl,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 labelText: 'Enter value',
                 prefixIcon: Icon(Icons.numbers_rounded),
@@ -154,7 +215,17 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: _unitDropdown('From', _fromUnit, units, (v) => setState(() { _fromUnit = v!; _convert(); }))),
+                Expanded(
+                  child: _unitDropdown(
+                    'From',
+                    _fromUnit,
+                    units,
+                    (v) => setState(() {
+                      _fromUnit = v!;
+                      _convert();
+                    }),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: GestureDetector(
@@ -175,7 +246,17 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                     ),
                   ),
                 ),
-                Expanded(child: _unitDropdown('To', _toUnit, units, (v) => setState(() { _toUnit = v!; _convert(); }))),
+                Expanded(
+                  child: _unitDropdown(
+                    'To',
+                    _toUnit,
+                    units,
+                    (v) => setState(() {
+                      _toUnit = v!;
+                      _convert();
+                    }),
+                  ),
+                ),
               ],
             ),
             if (_result != null) ...[
@@ -191,7 +272,10 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                   children: [
                     Text(
                       '${_inputCtrl.text} $_fromUnit =',
-                      style: TextStyle(fontSize: 14, color: cs.onPrimaryContainer.withOpacity(0.7)),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -212,11 +296,19 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
     );
   }
 
-  Widget _unitDropdown(String label, String value, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _unitDropdown(
+    String label,
+    String value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 6),
         InputDecorator(
           decoration: const InputDecoration(),
@@ -224,7 +316,14 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
             value: value,
             isExpanded: true,
             underline: const SizedBox(),
-            items: items.map((u) => DropdownMenuItem(value: u, child: Text(u, style: const TextStyle(fontSize: 13)))).toList(),
+            items: items
+                .map(
+                  (u) => DropdownMenuItem(
+                    value: u,
+                    child: Text(u, style: const TextStyle(fontSize: 13)),
+                  ),
+                )
+                .toList(),
             onChanged: onChanged,
           ),
         ),
@@ -237,17 +336,26 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
       return val.toStringAsExponential(4);
     }
     if (val == val.roundToDouble()) return val.toInt().toString();
-    return val.toStringAsFixed(6).replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+    return val
+        .toStringAsFixed(6)
+        .replaceAll(RegExp(r'0+$'), '')
+        .replaceAll(RegExp(r'\.$'), '');
   }
 
   String _catLabel(UnitCategory cat) {
     switch (cat) {
-      case UnitCategory.length: return 'Length';
-      case UnitCategory.weight: return 'Weight';
-      case UnitCategory.temperature: return 'Temp';
-      case UnitCategory.storage: return 'Storage';
-      case UnitCategory.area: return 'Area';
-      case UnitCategory.speed: return 'Speed';
+      case UnitCategory.length:
+        return 'Length';
+      case UnitCategory.weight:
+        return 'Weight';
+      case UnitCategory.temperature:
+        return 'Temp';
+      case UnitCategory.storage:
+        return 'Storage';
+      case UnitCategory.area:
+        return 'Area';
+      case UnitCategory.speed:
+        return 'Speed';
     }
   }
 }

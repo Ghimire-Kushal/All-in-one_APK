@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: SectionHeader(
                   title: 'Productivity',
-                  emoji: '📋',
+                  icon: Icons.checklist_rounded,
                   accentColor: AppColors.productivity,
                 ),
               ),
@@ -65,9 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: SectionHeader(
                   title: 'Utilities',
-                  emoji: '🔧',
+                  icon: Icons.build_rounded,
                   accentColor: AppColors.utilities,
-                  onSeeAll: () => _navigateTo(context, const UtilitiesHubScreen()),
+                  onSeeAll: () =>
+                      _navigateTo(context, const UtilitiesHubScreen()),
                 ),
               ),
             ),
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: SectionHeader(
                   title: 'Documents',
-                  emoji: '📁',
+                  icon: Icons.folder_rounded,
                   accentColor: AppColors.documents,
                 ),
               ),
@@ -88,13 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: SectionHeader(
                   title: 'Security',
-                  emoji: '🔒',
+                  icon: Icons.security_rounded,
                   accentColor: AppColors.security,
                 ),
               ),
             ),
             SliverToBoxAdapter(child: _buildSecurityCard(context)),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            const SliverToBoxAdapter(child: SizedBox(height: 112)),
           ],
         ],
       ),
@@ -118,7 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 filled: true,
                 fillColor: isDark ? const Color(0xFF1C1F2A) : Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 prefixIcon: const Icon(Icons.search, size: 20),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.close, size: 20),
@@ -147,7 +151,11 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: CircleAvatar(
             radius: 16,
             backgroundColor: cs.primaryContainer,
-            child: Icon(Icons.person_rounded, size: 18, color: cs.onPrimaryContainer),
+            child: Icon(
+              Icons.person_rounded,
+              size: 18,
+              color: cs.onPrimaryContainer,
+            ),
           ),
           onPressed: () => _navigateTo(context, const SettingsScreen()),
         ),
@@ -158,10 +166,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProductivityGrid(BuildContext context) {
     final items = [
-      _FeatureItem('Notes', Icons.sticky_note_2_rounded, AppColors.notes, () => _navigateTo(context, const NotesScreen())),
-      _FeatureItem('To-Do', Icons.checklist_rounded, AppColors.todo, () => _navigateTo(context, const TodoScreen())),
-      _FeatureItem('Expenses', Icons.account_balance_wallet_rounded, AppColors.expense, () => _navigateTo(context, const ExpenseScreen())),
-      _FeatureItem('Timetable', Icons.calendar_view_week_rounded, AppColors.timetable, () => _navigateTo(context, const TimetableScreen())),
+      _FeatureItem(
+        'Notes',
+        Icons.sticky_note_2_rounded,
+        AppColors.notes,
+        () => _navigateTo(context, const NotesScreen()),
+      ),
+      _FeatureItem(
+        'To-Do',
+        Icons.checklist_rounded,
+        AppColors.todo,
+        () => _navigateTo(context, const TodoScreen()),
+      ),
+      _FeatureItem(
+        'Expenses',
+        Icons.account_balance_wallet_rounded,
+        AppColors.expense,
+        () => _navigateTo(context, const ExpenseScreen()),
+      ),
+      _FeatureItem(
+        'Timetable',
+        Icons.calendar_view_week_rounded,
+        AppColors.timetable,
+        () => _navigateTo(context, const TimetableScreen()),
+      ),
     ];
 
     return Padding(
@@ -173,24 +201,53 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
         childAspectRatio: 2.0,
-        children: items.map((item) => FeatureCard(
-          label: item.label,
-          icon: item.icon,
-          color: item.color,
-          onTap: item.onTap,
-          compact: true,
-        )).toList(),
+        children: items
+            .map(
+              (item) => FeatureCard(
+                label: item.label,
+                icon: item.icon,
+                color: item.color,
+                onTap: item.onTap,
+                compact: true,
+              ),
+            )
+            .toList(),
       ),
     );
   }
 
   Widget _buildUtilitiesRow(BuildContext context) {
     final items = [
-      _FeatureItem('Date\nConverter', Icons.calendar_month_rounded, AppColors.dateConverter, () => _navigateTo(context, const DateConverterScreen())),
-      _FeatureItem('Stopwatch', Icons.timer_rounded, AppColors.stopwatch, () => _navigateTo(context, const StopwatchScreen())),
-      _FeatureItem('Timer', Icons.hourglass_bottom_rounded, AppColors.timer, () => _navigateTo(context, const TimerScreen())),
-      _FeatureItem('Unit\nConverter', Icons.swap_horiz_rounded, AppColors.unitConverter, () => _navigateTo(context, const UnitConverterScreen())),
-      _FeatureItem('Calculator', Icons.calculate_rounded, AppColors.calculator, () => _navigateTo(context, const CalculatorScreen())),
+      _FeatureItem(
+        'Date\nConverter',
+        Icons.calendar_month_rounded,
+        AppColors.dateConverter,
+        () => _navigateTo(context, const DateConverterScreen()),
+      ),
+      _FeatureItem(
+        'Stopwatch',
+        Icons.timer_rounded,
+        AppColors.stopwatch,
+        () => _navigateTo(context, const StopwatchScreen()),
+      ),
+      _FeatureItem(
+        'Timer',
+        Icons.hourglass_bottom_rounded,
+        AppColors.timer,
+        () => _navigateTo(context, const TimerScreen()),
+      ),
+      _FeatureItem(
+        'Unit\nConverter',
+        Icons.swap_horiz_rounded,
+        AppColors.unitConverter,
+        () => _navigateTo(context, const UnitConverterScreen()),
+      ),
+      _FeatureItem(
+        'Calculator',
+        Icons.calculate_rounded,
+        AppColors.calculator,
+        () => _navigateTo(context, const CalculatorScreen()),
+      ),
     ];
 
     return SizedBox(
@@ -217,9 +274,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDocumentsGrid(BuildContext context) {
     final items = [
-      _FeatureItem('QR Code', Icons.qr_code_2_rounded, AppColors.qr, () => _navigateTo(context, const QrScreen())),
-      _FeatureItem('PDF Tools', Icons.picture_as_pdf_rounded, AppColors.pdf, () => _navigateTo(context, const PdfToolsScreen())),
-      _FeatureItem('Clipboard', Icons.content_paste_rounded, AppColors.clipboard, () => _navigateTo(context, const ClipboardScreen())),
+      _FeatureItem(
+        'QR Code',
+        Icons.qr_code_2_rounded,
+        AppColors.qr,
+        () => _navigateTo(context, const QrScreen()),
+      ),
+      _FeatureItem(
+        'PDF Tools',
+        Icons.picture_as_pdf_rounded,
+        AppColors.pdf,
+        () => _navigateTo(context, const PdfToolsScreen()),
+      ),
+      _FeatureItem(
+        'Clipboard',
+        Icons.content_paste_rounded,
+        AppColors.clipboard,
+        () => _navigateTo(context, const ClipboardScreen()),
+      ),
     ];
 
     return Padding(
@@ -228,7 +300,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: items.asMap().entries.map((entry) {
           return Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: entry.key < items.length - 1 ? 10 : 0),
+              padding: EdgeInsets.only(
+                right: entry.key < items.length - 1 ? 10 : 0,
+              ),
               child: AspectRatio(
                 aspectRatio: 0.95,
                 child: FeatureCard(
@@ -262,7 +336,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSearchResults(BuildContext context) {
     final allItems = _allFeatures(context);
     final q = _searchQuery.toLowerCase();
-    final filtered = allItems.where((item) => item.label.toLowerCase().contains(q)).toList();
+    final filtered = allItems
+        .where((item) => item.label.toLowerCase().contains(q))
+        .toList();
 
     return SliverPadding(
       padding: const EdgeInsets.all(20),
@@ -285,19 +361,84 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<_FeatureItem> _allFeatures(BuildContext context) => [
-    _FeatureItem('Notes', Icons.sticky_note_2_rounded, AppColors.notes, () => _navigateTo(context, const NotesScreen())),
-    _FeatureItem('To-Do', Icons.checklist_rounded, AppColors.todo, () => _navigateTo(context, const TodoScreen())),
-    _FeatureItem('Expense Tracker', Icons.account_balance_wallet_rounded, AppColors.expense, () => _navigateTo(context, const ExpenseScreen())),
-    _FeatureItem('Timetable', Icons.calendar_view_week_rounded, AppColors.timetable, () => _navigateTo(context, const TimetableScreen())),
-    _FeatureItem('Date Converter', Icons.calendar_month_rounded, AppColors.dateConverter, () => _navigateTo(context, const DateConverterScreen())),
-    _FeatureItem('Stopwatch', Icons.timer_rounded, AppColors.stopwatch, () => _navigateTo(context, const StopwatchScreen())),
-    _FeatureItem('Timer', Icons.hourglass_bottom_rounded, AppColors.timer, () => _navigateTo(context, const TimerScreen())),
-    _FeatureItem('Unit Converter', Icons.swap_horiz_rounded, AppColors.unitConverter, () => _navigateTo(context, const UnitConverterScreen())),
-    _FeatureItem('Calculator', Icons.calculate_rounded, AppColors.calculator, () => _navigateTo(context, const CalculatorScreen())),
-    _FeatureItem('QR Scanner & Generator', Icons.qr_code_2_rounded, AppColors.qr, () => _navigateTo(context, const QrScreen())),
-    _FeatureItem('PDF Tools', Icons.picture_as_pdf_rounded, AppColors.pdf, () => _navigateTo(context, const PdfToolsScreen())),
-    _FeatureItem('Clipboard History', Icons.content_paste_rounded, AppColors.clipboard, () => _navigateTo(context, const ClipboardScreen())),
-    _FeatureItem('Password Vault', Icons.lock_rounded, AppColors.vault, () => _navigateTo(context, const VaultScreen())),
+    _FeatureItem(
+      'Notes',
+      Icons.sticky_note_2_rounded,
+      AppColors.notes,
+      () => _navigateTo(context, const NotesScreen()),
+    ),
+    _FeatureItem(
+      'To-Do',
+      Icons.checklist_rounded,
+      AppColors.todo,
+      () => _navigateTo(context, const TodoScreen()),
+    ),
+    _FeatureItem(
+      'Expense Tracker',
+      Icons.account_balance_wallet_rounded,
+      AppColors.expense,
+      () => _navigateTo(context, const ExpenseScreen()),
+    ),
+    _FeatureItem(
+      'Timetable',
+      Icons.calendar_view_week_rounded,
+      AppColors.timetable,
+      () => _navigateTo(context, const TimetableScreen()),
+    ),
+    _FeatureItem(
+      'Date Converter',
+      Icons.calendar_month_rounded,
+      AppColors.dateConverter,
+      () => _navigateTo(context, const DateConverterScreen()),
+    ),
+    _FeatureItem(
+      'Stopwatch',
+      Icons.timer_rounded,
+      AppColors.stopwatch,
+      () => _navigateTo(context, const StopwatchScreen()),
+    ),
+    _FeatureItem(
+      'Timer',
+      Icons.hourglass_bottom_rounded,
+      AppColors.timer,
+      () => _navigateTo(context, const TimerScreen()),
+    ),
+    _FeatureItem(
+      'Unit Converter',
+      Icons.swap_horiz_rounded,
+      AppColors.unitConverter,
+      () => _navigateTo(context, const UnitConverterScreen()),
+    ),
+    _FeatureItem(
+      'Calculator',
+      Icons.calculate_rounded,
+      AppColors.calculator,
+      () => _navigateTo(context, const CalculatorScreen()),
+    ),
+    _FeatureItem(
+      'QR Scanner & Generator',
+      Icons.qr_code_2_rounded,
+      AppColors.qr,
+      () => _navigateTo(context, const QrScreen()),
+    ),
+    _FeatureItem(
+      'PDF Tools',
+      Icons.picture_as_pdf_rounded,
+      AppColors.pdf,
+      () => _navigateTo(context, const PdfToolsScreen()),
+    ),
+    _FeatureItem(
+      'Clipboard History',
+      Icons.content_paste_rounded,
+      AppColors.clipboard,
+      () => _navigateTo(context, const ClipboardScreen()),
+    ),
+    _FeatureItem(
+      'Password Vault',
+      Icons.lock_rounded,
+      AppColors.vault,
+      () => _navigateTo(context, const VaultScreen()),
+    ),
   ];
 
   void _navigateTo(BuildContext context, Widget screen) {

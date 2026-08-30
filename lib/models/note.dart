@@ -18,22 +18,22 @@ class Note {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'content': content,
-        'isPinned': isPinned,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-        'colorHex': colorHex,
-      };
+    'id': id,
+    'title': title,
+    'content': content,
+    'isPinned': isPinned,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'colorHex': colorHex,
+  };
 
   factory Note.fromJson(Map<String, dynamic> json) => Note(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        content: json['content'] as String,
-        isPinned: json['isPinned'] as bool? ?? false,
-        createdAt: DateTime.parse(json['createdAt'] as String),
-        updatedAt: DateTime.parse(json['updatedAt'] as String),
-        colorHex: json['colorHex'] as String? ?? '#FFFFFF',
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    content: json['content'] as String,
+    isPinned: json['isPinned'] as bool? ?? false,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+    updatedAt: DateTime.parse(json['updatedAt'] as String),
+    colorHex: json['colorHex'] as String? ?? '#FFFFFF',
+  );
 }

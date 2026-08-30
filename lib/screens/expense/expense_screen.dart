@@ -12,7 +12,8 @@ class ExpenseScreen extends StatefulWidget {
   State<ExpenseScreen> createState() => _ExpenseScreenState();
 }
 
-class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProviderStateMixin {
+class _ExpenseScreenState extends State<ExpenseScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tab;
   DateTime _month = DateTime.now();
 
@@ -44,10 +45,16 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense Tracker', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Expense Tracker',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         bottom: TabBar(
           controller: _tab,
-          tabs: const [Tab(text: 'Overview'), Tab(text: 'Transactions')],
+          tabs: const [
+            Tab(text: 'Overview'),
+            Tab(text: 'Transactions'),
+          ],
         ),
       ),
       body: TabBarView(
@@ -65,8 +72,12 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildOverview(BuildContext context, ExpenseProvider provider,
-      List<Expense> monthExpenses, double total) {
+  Widget _buildOverview(
+    BuildContext context,
+    ExpenseProvider provider,
+    List<Expense> monthExpenses,
+    double total,
+  ) {
     final cs = Theme.of(context).colorScheme;
     final catTotals = provider.categoryTotals(_month.year, _month.month);
 
@@ -84,14 +95,24 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  Icon(Icons.receipt_long_rounded, size: 60, color: Colors.grey[300]),
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    size: 60,
+                    color: Colors.grey[300],
+                  ),
                   const SizedBox(height: 12),
-                  Text('No expenses this month', style: TextStyle(color: Colors.grey[500])),
+                  Text(
+                    'No expenses this month',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
                 ],
               ),
             )
           else ...[
-            const Text('Category Breakdown', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+            const Text(
+              'Category Breakdown',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+            ),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -108,7 +129,10 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                             title: '${pct.toStringAsFixed(0)}%',
                             radius: 60,
                             titleStyle: const TextStyle(
-                              fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
                           );
                         }).toList(),
                         centerSpaceRadius: 30,
@@ -120,27 +144,31 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: catTotals.entries.map((e) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: _categoryColors[e.key],
-                              shape: BoxShape.circle,
+                    children: catTotals.entries
+                        .map(
+                          (e) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: _categoryColors[e.key],
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '${e.key.label}: Rs${e.value.toStringAsFixed(0)}',
+                                  style: const TextStyle(fontSize: 11),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${e.key.label}: Rs${e.value.toStringAsFixed(0)}',
-                            style: const TextStyle(fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    )).toList(),
+                        )
+                        .toList(),
                   ),
                 ],
               ),
@@ -156,8 +184,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
       children: [
         IconButton(
           icon: const Icon(Icons.chevron_left_rounded),
-          onPressed: () => setState(() =>
-              _month = DateTime(_month.year, _month.month - 1)),
+          onPressed: () =>
+              setState(() => _month = DateTime(_month.year, _month.month - 1)),
         ),
         Expanded(
           child: Text(
@@ -168,8 +196,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
         ),
         IconButton(
           icon: const Icon(Icons.chevron_right_rounded),
-          onPressed: () => setState(() =>
-              _month = DateTime(_month.year, _month.month + 1)),
+          onPressed: () =>
+              setState(() => _month = DateTime(_month.year, _month.month + 1)),
         ),
       ],
     );
@@ -190,23 +218,34 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Total Spent', style: TextStyle(color: Colors.white70, fontSize: 13)),
+          const Text(
+            'Total Spent',
+            style: TextStyle(color: Colors.white70, fontSize: 13),
+          ),
           const SizedBox(height: 8),
           Text(
             'Rs ${NumberFormat('#,##0.00').format(total)}',
             style: const TextStyle(
-              color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800),
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const SizedBox(height: 4),
-          Text(DateFormat('MMMM yyyy').format(_month),
-              style: const TextStyle(color: Colors.white60, fontSize: 12)),
+          Text(
+            DateFormat('MMMM yyyy').format(_month),
+            style: const TextStyle(color: Colors.white60, fontSize: 12),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTransactions(BuildContext context, ExpenseProvider provider,
-      List<Expense> expenses) {
+  Widget _buildTransactions(
+    BuildContext context,
+    ExpenseProvider provider,
+    List<Expense> expenses,
+  ) {
     if (expenses.isEmpty) {
       return Center(
         child: Column(
@@ -250,12 +289,24 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: (_categoryColors[e.category] ?? Colors.grey).withOpacity(0.1),
+                  color: (_categoryColors[e.category] ?? Colors.grey)
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(child: Text(e.category.emoji, style: const TextStyle(fontSize: 20))),
+                child: Center(
+                  child: Text(
+                    e.category.emoji,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ),
               ),
-              title: Text(e.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              title: Text(
+                e.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
               subtitle: Text(
                 '${e.category.label} • ${DateFormat('MMM d').format(e.date)}',
                 style: TextStyle(fontSize: 12, color: Colors.grey[500]),
@@ -284,64 +335,94 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setS) => Padding(
           padding: EdgeInsets.only(
-            left: 20, right: 20, top: 20,
+            left: 20,
+            right: 20,
+            top: 20,
             bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Add Expense', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              const Text(
+                'Add Expense',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
               const SizedBox(height: 16),
-              TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Title')),
+              TextField(
+                controller: titleCtrl,
+                decoration: const InputDecoration(labelText: 'Title'),
+              ),
               const SizedBox(height: 12),
               TextField(
                 controller: amountCtrl,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Amount (Rs)', prefixText: 'Rs '),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  labelText: 'Amount (Rs)',
+                  prefixText: 'Rs ',
+                ),
               ),
               const SizedBox(height: 12),
-              const Text('Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+              const Text(
+                'Category',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: ExpenseCategory.values.map((cat) => GestureDetector(
-                  onTap: () => setS(() => category = cat),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: category == cat
-                          ? (_categoryColors[cat] ?? Colors.grey).withOpacity(0.15)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: category == cat
-                            ? (_categoryColors[cat] ?? Colors.grey)
-                            : Colors.grey[300]!,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(cat.emoji, style: const TextStyle(fontSize: 14)),
-                        const SizedBox(width: 4),
-                        Text(cat.label,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                children: ExpenseCategory.values
+                    .map(
+                      (cat) => GestureDetector(
+                        onTap: () => setS(() => category = cat),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: category == cat
+                                ? (_categoryColors[cat] ?? Colors.grey)
+                                      .withValues(alpha: 0.15)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
                               color: category == cat
                                   ? (_categoryColors[cat] ?? Colors.grey)
-                                  : Colors.grey,
-                            )),
-                      ],
-                    ),
-                  ),
-                )).toList(),
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                cat.emoji,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                cat.label,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: category == cat
+                                      ? (_categoryColors[cat] ?? Colors.grey)
+                                      : Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
               const SizedBox(height: 16),
               SizedBox(
@@ -351,7 +432,9 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                     final amount = double.tryParse(amountCtrl.text);
                     if (titleCtrl.text.trim().isEmpty || amount == null) return;
                     context.read<ExpenseProvider>().addExpense(
-                      titleCtrl.text.trim(), amount, category,
+                      titleCtrl.text.trim(),
+                      amount,
+                      category,
                     );
                     Navigator.pop(ctx);
                   },

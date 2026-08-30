@@ -31,7 +31,10 @@ class ClipboardProvider extends ChangeNotifier {
   }
 
   CollectionReference<Map<String, dynamic>> _col(String uid) =>
-      FirebaseFirestore.instance.collection('users').doc(uid).collection('clipboard');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('clipboard');
 
   void _onAuthChanged(User? user) async {
     await _fsSub?.cancel();
@@ -65,7 +68,9 @@ class ClipboardProvider extends ChangeNotifier {
     final raw = prefs.getString(_prefKey);
     if (raw != null) {
       final list = jsonDecode(raw) as List;
-      _items = list.map((e) => ClipboardItem.fromJson(e as Map<String, dynamic>)).toList();
+      _items = list
+          .map((e) => ClipboardItem.fromJson(e as Map<String, dynamic>))
+          .toList();
       _sort();
       notifyListeners();
     }
@@ -73,7 +78,10 @@ class ClipboardProvider extends ChangeNotifier {
 
   Future<void> _saveLocal() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, jsonEncode(_items.map((i) => i.toJson()).toList()));
+    await prefs.setString(
+      _prefKey,
+      jsonEncode(_items.map((i) => i.toJson()).toList()),
+    );
   }
 
   Future<void> _saveRemote(ClipboardItem item) async {

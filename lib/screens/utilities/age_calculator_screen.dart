@@ -48,14 +48,16 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
 
     // Next birthday
     DateTime nextBd = DateTime(target.year, dob.month, dob.day);
-    if (!nextBd.isAfter(target)) nextBd = DateTime(target.year + 1, dob.month, dob.day);
+    if (!nextBd.isAfter(target))
+      nextBd = DateTime(target.year + 1, dob.month, dob.day);
     final daysToNext = nextBd.difference(target).inDays;
 
     setState(() {
       _age = {'years': years, 'months': months, 'days': days};
       _totalDays = totalDays;
       _totalMonths = totalMonths;
-      _nextBirthday = '$daysToNext days until next birthday (${DateFormat('MMM d, yyyy').format(nextBd)})';
+      _nextBirthday =
+          '$daysToNext days until next birthday (${DateFormat('MMM d, yyyy').format(nextBd)})';
     });
   }
 
@@ -65,17 +67,25 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Age Calculator', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Age Calculator',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Date of Birth', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Date of Birth',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 10),
             _dateTile(
-              _dob == null ? 'Select date of birth' : DateFormat('MMMM d, yyyy').format(_dob!),
+              _dob == null
+                  ? 'Select date of birth'
+                  : DateFormat('MMMM d, yyyy').format(_dob!),
               Icons.cake_rounded,
               cs.primary,
               () async {
@@ -89,7 +99,10 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
               },
             ),
             const SizedBox(height: 20),
-            const Text('Calculate Age At', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Calculate Age At',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 10),
             _dateTile(
               DateFormat('MMMM d, yyyy').format(_targetDate),
@@ -134,7 +147,10 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
                       Expanded(
                         child: Text(
                           _nextBirthday!,
-                          style: TextStyle(color: cs.onTertiaryContainer, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                            color: cs.onTertiaryContainer,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -167,7 +183,13 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          Text('Your age', style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer.withOpacity(0.6))),
+          Text(
+            'Your age',
+            style: TextStyle(
+              fontSize: 12,
+              color: cs.onPrimaryContainer.withValues(alpha: 0.6),
+            ),
+          ),
         ],
       ),
     );
@@ -176,9 +198,23 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
   Widget _statsRow(BuildContext context, ColorScheme cs) {
     return Row(
       children: [
-        Expanded(child: _statCard('$_totalDays', 'Total days', cs.secondaryContainer, cs.onSecondaryContainer)),
+        Expanded(
+          child: _statCard(
+            '$_totalDays',
+            'Total days',
+            cs.secondaryContainer,
+            cs.onSecondaryContainer,
+          ),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _statCard('$_totalMonths', 'Total months', cs.tertiaryContainer, cs.onTertiaryContainer)),
+        Expanded(
+          child: _statCard(
+            '$_totalMonths',
+            'Total months',
+            cs.tertiaryContainer,
+            cs.onTertiaryContainer,
+          ),
+        ),
       ],
     );
   }
@@ -186,31 +222,54 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
   Widget _statCard(String val, String label, Color bg, Color fg) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Column(
         children: [
-          Text(val, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: fg)),
+          Text(
+            val,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: fg,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(label, style: TextStyle(fontSize: 11, color: fg.withOpacity(0.7))),
+          Text(
+            label,
+            style: TextStyle(fontSize: 11, color: fg.withValues(alpha: 0.7)),
+          ),
         ],
       ),
     );
   }
 
-  Widget _dateTile(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _dateTile(
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          border: Border.all(color: color.withOpacity(0.4)),
+          border: Border.all(color: color.withValues(alpha: 0.4)),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 12),
-            Expanded(child: Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w500))),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(color: color, fontWeight: FontWeight.w500),
+              ),
+            ),
             Icon(Icons.arrow_drop_down_rounded, color: color),
           ],
         ),

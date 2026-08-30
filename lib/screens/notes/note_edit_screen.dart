@@ -17,8 +17,14 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
   late String _colorHex;
 
   static const _colors = [
-    '#FFFFFF', '#FFF9C4', '#F8BBD9', '#C8E6C9',
-    '#BBDEFB', '#FFE0B2', '#E1BEE7', '#B2EBF2',
+    '#FFFFFF',
+    '#FFF9C4',
+    '#F8BBD9',
+    '#C8E6C9',
+    '#BBDEFB',
+    '#FFE0B2',
+    '#E1BEE7',
+    '#B2EBF2',
   ];
 
   @override
@@ -43,7 +49,11 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
         Navigator.pop(context);
         return;
       }
-      await provider.addNote(_titleCtrl.text, _contentCtrl.text, colorHex: _colorHex);
+      await provider.addNote(
+        _titleCtrl.text,
+        _contentCtrl.text,
+        colorHex: _colorHex,
+      );
     } else {
       widget.note!
         ..title = _titleCtrl.text
@@ -62,14 +72,18 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF1C1F2A) : _hex(_colorHex).withOpacity(0.9);
+    final bg = isDark
+        ? const Color(0xFF1C1F2A)
+        : _hex(_colorHex).withValues(alpha: 0.9);
 
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
         backgroundColor: bg,
-        title: Text(widget.note == null ? 'New Note' : 'Edit Note',
-            style: const TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(
+          widget.note == null ? 'New Note' : 'Edit Note',
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.palette_outlined),
@@ -85,7 +99,10 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
             ),
           TextButton(
             onPressed: _save,
-            child: const Text('Save', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: const Text(
+              'Save',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
@@ -137,7 +154,10 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Note Color', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+            const Text(
+              'Note Color',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
@@ -156,7 +176,9 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
                       color: color,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: _colorHex == hex ? Colors.blue : Colors.grey[300]!,
+                        color: _colorHex == hex
+                            ? Colors.blue
+                            : Colors.grey[300]!,
                         width: _colorHex == hex ? 3 : 1,
                       ),
                     ),

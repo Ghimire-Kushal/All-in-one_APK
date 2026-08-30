@@ -27,8 +27,13 @@ const _kCategories = [
 const _kDayShort = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const _kDayFull = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const _kDayFullName = [
-  'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-  'Friday', 'Saturday', 'Sunday'
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
 ];
 
 Color _colorFromHex(String hex) =>
@@ -77,16 +82,24 @@ class _TimetableScreenState extends State<TimetableScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Routine',
-            style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Daily Routine',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         bottom: TabBar(
           controller: _tab,
-          tabs: const [Tab(text: 'Today'), Tab(text: 'All Days')],
+          tabs: const [
+            Tab(text: 'Today'),
+            Tab(text: 'All Days'),
+          ],
         ),
       ),
       body: TabBarView(
         controller: _tab,
-        children: [_TodayTab(onEdit: _openSheet), _AllDaysTab(onEdit: _openSheet)],
+        children: [
+          _TodayTab(onEdit: _openSheet),
+          _AllDaysTab(onEdit: _openSheet),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openSheet(),
@@ -115,16 +128,25 @@ class _TodayTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.free_breakfast_rounded, size: 72, color: Colors.grey[300]),
+            Icon(
+              Icons.free_breakfast_rounded,
+              size: 72,
+              color: Colors.grey[300],
+            ),
             const SizedBox(height: 16),
-            Text('Free $dayName!',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.grey[500])),
+            Text(
+              'Free $dayName!',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[500],
+              ),
+            ),
             const SizedBox(height: 6),
-            Text('No activities scheduled today.',
-                style: TextStyle(fontSize: 13, color: Colors.grey[400])),
+            Text(
+              'No activities scheduled today.',
+              style: TextStyle(fontSize: 13, color: Colors.grey[400]),
+            ),
             const SizedBox(height: 20),
           ],
         ),
@@ -140,7 +162,12 @@ class _TodayTab extends StatelessWidget {
         ],
         _ProgressBar(entries: entries),
         const SizedBox(height: 16),
-        ...entries.map((e) => _ActivityTile(entry: e, onEdit: () => onEdit(entry: e))),
+        ...entries.map(
+          (e) => _ActivityTile(
+            entry: e,
+            onEdit: () => onEdit(entry: e),
+          ),
+        ),
       ],
     );
   }
@@ -176,17 +203,23 @@ class _ProgressBar extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('Today\'s Progress',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                      color: cs.onPrimaryContainer)),
+              Text(
+                'Today\'s Progress',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: cs.onPrimaryContainer,
+                ),
+              ),
               const Spacer(),
-              Text('$done / ${entries.length} done',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                      color: cs.primary)),
+              Text(
+                '$done / ${entries.length} done',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: cs.primary,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -235,9 +268,10 @@ class _NextBanner extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.5), width: 1.5),
         boxShadow: [
           BoxShadow(
-              color: color.withValues(alpha: 0.12),
-              blurRadius: 12,
-              offset: const Offset(0, 4)),
+            color: color.withValues(alpha: 0.12),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Row(
@@ -256,28 +290,40 @@ class _NextBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Up next',
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w500)),
+                Text(
+                  'Up next',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(entry.title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w800)),
+                Text(
+                  entry.title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    Icon(Icons.access_time_rounded,
-                        size: 12, color: Colors.grey[500]),
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 12,
+                      color: Colors.grey[500],
+                    ),
                     const SizedBox(width: 4),
-                    Text(entry.startLabel,
-                        style: TextStyle(
-                            fontSize: 12, color: Colors.grey[500])),
+                    Text(
+                      entry.startLabel,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    ),
                     if (entry.endLabel != null) ...[
-                      Text(' – ${entry.endLabel}',
-                          style: TextStyle(
-                              fontSize: 12, color: Colors.grey[500])),
+                      Text(
+                        ' – ${entry.endLabel}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      ),
                     ],
                   ],
                 ),
@@ -285,17 +331,19 @@ class _NextBanner extends StatelessWidget {
             ),
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(_countdown(),
-                style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 13)),
+            child: Text(
+              _countdown(),
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+              ),
+            ),
           ),
         ],
       ),
@@ -381,37 +429,48 @@ class _DaySectionState extends State<_DaySection> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Text(widget.dayShort,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: widget.isToday
-                                ? Colors.white
-                                : cs.onPrimaryContainer)),
+                    child: Text(
+                      widget.dayShort,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        color: widget.isToday
+                            ? Colors.white
+                            : cs.onPrimaryContainer,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(widget.dayFull,
-                    style: TextStyle(
-                        fontWeight: widget.isToday
-                            ? FontWeight.w700
-                            : FontWeight.w600,
-                        fontSize: 15,
-                        color: widget.isToday ? cs.primary : null)),
+                Text(
+                  widget.dayFull,
+                  style: TextStyle(
+                    fontWeight: widget.isToday
+                        ? FontWeight.w700
+                        : FontWeight.w600,
+                    fontSize: 15,
+                    color: widget.isToday ? cs.primary : null,
+                  ),
+                ),
                 const SizedBox(width: 8),
                 if (widget.entries.isNotEmpty)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: cs.primaryContainer.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text('${widget.entries.length}',
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: cs.onPrimaryContainer)),
+                    child: Text(
+                      '${widget.entries.length}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: cs.onPrimaryContainer,
+                      ),
+                    ),
                   ),
                 const Spacer(),
                 Icon(
@@ -429,12 +488,18 @@ class _DaySectionState extends State<_DaySection> {
           if (widget.entries.isEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 48, bottom: 8),
-              child: Text('No activities',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[400])),
+              child: Text(
+                'No activities',
+                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+              ),
             )
           else
-            ...widget.entries.map((e) => _ActivityTile(
-                entry: e, onEdit: () => widget.onEdit(entry: e))),
+            ...widget.entries.map(
+              (e) => _ActivityTile(
+                entry: e,
+                onEdit: () => widget.onEdit(entry: e),
+              ),
+            ),
         ],
         Divider(height: 1, color: Colors.grey.withValues(alpha: 0.15)),
         const SizedBox(height: 4),
@@ -461,9 +526,12 @@ class _ActivityTile extends StatelessWidget {
     final endMin = (entry.endHour != null && entry.endMinute != null)
         ? entry.endHour! * 60 + entry.endMinute!
         : entry.startMinutes + 30;
-    final isNow = entry.startMinutes <= nowMin && nowMin < endMin &&
+    final isNow =
+        entry.startMinutes <= nowMin &&
+        nowMin < endMin &&
         DateTime.now().weekday == entry.days.firstOrNull;
-    final isPast = nowMin >= endMin && DateTime.now().weekday == entry.days.firstOrNull;
+    final isPast =
+        nowMin >= endMin && DateTime.now().weekday == entry.days.firstOrNull;
 
     return Dismissible(
       key: Key(entry.id),
@@ -472,7 +540,9 @@ class _ActivityTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-            color: Colors.red, borderRadius: BorderRadius.circular(16)),
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(16),
+        ),
         alignment: Alignment.centerRight,
         child: const Icon(Icons.delete_rounded, color: Colors.white),
       ),
@@ -483,12 +553,12 @@ class _ActivityTile extends StatelessWidget {
           content: Text('Remove "${entry.title}" from your routine?'),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete',
-                  style: TextStyle(color: Colors.red)),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         ),
@@ -507,9 +577,10 @@ class _ActivityTile extends StatelessWidget {
                 : null,
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2)),
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
           child: Row(
@@ -519,9 +590,7 @@ class _ActivityTile extends StatelessWidget {
                 width: 5,
                 height: 70,
                 decoration: BoxDecoration(
-                  color: isPast
-                      ? color.withValues(alpha: 0.25)
-                      : color,
+                  color: isPast ? color.withValues(alpha: 0.25) : color,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16),
                     bottomLeft: Radius.circular(16),
@@ -539,9 +608,11 @@ class _ActivityTile extends StatelessWidget {
                       : color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(cat.icon,
-                    size: 20,
-                    color: isPast ? Colors.grey[400] : color),
+                child: Icon(
+                  cat.icon,
+                  size: 20,
+                  color: isPast ? Colors.grey[400] : color,
+                ),
               ),
               const SizedBox(width: 12),
               // Content
@@ -567,16 +638,21 @@ class _ActivityTile extends StatelessWidget {
                           const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: color.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Text('NOW',
-                                style: TextStyle(
-                                    fontSize: 9,
-                                    color: color,
-                                    fontWeight: FontWeight.w800)),
+                            child: Text(
+                              'NOW',
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: color,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           ),
                         ],
                       ],
@@ -584,21 +660,20 @@ class _ActivityTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.access_time_rounded,
-                            size: 11,
-                            color: isPast
-                                ? Colors.grey[400]
-                                : Colors.grey[500]),
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 11,
+                          color: isPast ? Colors.grey[400] : Colors.grey[500],
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           entry.endLabel != null
                               ? '${entry.startLabel} – ${entry.endLabel}'
                               : entry.startLabel,
                           style: TextStyle(
-                              fontSize: 12,
-                              color: isPast
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600]),
+                            fontSize: 12,
+                            color: isPast ? Colors.grey[400] : Colors.grey[600],
+                          ),
                         ),
                         if (entry.isEveryDay) ...[
                           const SizedBox(width: 8),
@@ -606,33 +681,38 @@ class _ActivityTile extends StatelessWidget {
                         ] else if (entry.days.length < 7) ...[
                           const SizedBox(width: 8),
                           _chip(
-                            entry.days
-                                .map((d) => _kDayShort[d - 1])
-                                .join(' '),
+                            entry.days.map((d) => _kDayShort[d - 1]).join(' '),
                             color,
                           ),
                         ],
                         if (entry.notifyEnabled) ...[
                           const SizedBox(width: 6),
-                          Icon(Icons.notifications_active_rounded,
-                              size: 11, color: color),
+                          Icon(
+                            Icons.notifications_active_rounded,
+                            size: 11,
+                            color: color,
+                          ),
                         ],
                       ],
                     ),
                     if (entry.notes != null && entry.notes!.isNotEmpty) ...[
                       const SizedBox(height: 2),
-                      Text(entry.notes!,
-                          style: TextStyle(
-                              fontSize: 11, color: Colors.grey[400]),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
+                      Text(
+                        entry.notes!,
+                        style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ],
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.edit_outlined,
-                    size: 18, color: Colors.grey[400]),
+                icon: Icon(
+                  Icons.edit_outlined,
+                  size: 18,
+                  color: Colors.grey[400],
+                ),
                 onPressed: onEdit,
               ),
             ],
@@ -643,17 +723,16 @@ class _ActivityTile extends StatelessWidget {
   }
 
   Widget _chip(String label, Color color) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(label,
-            style: TextStyle(
-                fontSize: 10,
-                color: color,
-                fontWeight: FontWeight.w600)),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.w600),
+    ),
+  );
 }
 
 // ─── Add / Edit Activity Sheet ────────────────────────────────────────────────
@@ -721,8 +800,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
           final endMin = _end!.hour * 60 + _end!.minute;
           if (endMin <= startMin) {
             final newEnd = startMin + 60;
-            _end = TimeOfDay(
-                hour: (newEnd ~/ 60) % 24, minute: newEnd % 60);
+            _end = TimeOfDay(hour: (newEnd ~/ 60) % 24, minute: newEnd % 60);
           }
         }
       } else {
@@ -762,19 +840,21 @@ class _ActivitySheetState extends State<_ActivitySheet> {
     final provider = context.read<TimetableProvider>();
 
     if (_isEdit) {
-      provider.updateEntry(widget.entry!.copyWith(
-        title: _titleCtrl.text.trim(),
-        notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
-        categoryIndex: _catIdx,
-        days: _days,
-        startHour: _start.hour,
-        startMinute: _start.minute,
-        endHour: _end?.hour,
-        endMinute: _end?.minute,
-        colorHex: colorHex,
-        notifyEnabled: _notifyEnabled,
-        notifyMinutesBefore: _notifyMinutes,
-      ));
+      provider.updateEntry(
+        widget.entry!.copyWith(
+          title: _titleCtrl.text.trim(),
+          notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+          categoryIndex: _catIdx,
+          days: _days,
+          startHour: _start.hour,
+          startMinute: _start.minute,
+          endHour: _end?.hour,
+          endMinute: _end?.minute,
+          colorHex: colorHex,
+          notifyEnabled: _notifyEnabled,
+          notifyMinutesBefore: _notifyMinutes,
+        ),
+      );
     } else {
       final entry = provider.buildNew(
         title: _titleCtrl.text.trim(),
@@ -818,19 +898,23 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(4)),
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            Text(_isEdit ? 'Edit Activity' : 'New Activity',
-                style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.w800)),
+            Text(
+              _isEdit ? 'Edit Activity' : 'New Activity',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            ),
             const SizedBox(height: 20),
 
             // Category picker
-            const Text('Category',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            const Text(
+              'Category',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
             const SizedBox(height: 10),
             GridView.count(
               crossAxisCount: 4,
@@ -849,28 +933,32 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                     decoration: BoxDecoration(
                       color: sel
                           ? cat.color.withValues(alpha: 0.15)
-                          : (isDark
-                              ? const Color(0xFF1C1F2A)
-                              : Colors.white),
+                          : (isDark ? const Color(0xFF1C1F2A) : Colors.white),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                          color: sel
-                              ? cat.color
-                              : Colors.grey.withValues(alpha: 0.2),
-                          width: sel ? 1.5 : 1),
+                        color: sel
+                            ? cat.color
+                            : Colors.grey.withValues(alpha: 0.2),
+                        width: sel ? 1.5 : 1,
+                      ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(cat.icon,
-                            color: sel ? cat.color : Colors.grey[400],
-                            size: 22),
+                        Icon(
+                          cat.icon,
+                          color: sel ? cat.color : Colors.grey[400],
+                          size: 22,
+                        ),
                         const SizedBox(height: 4),
-                        Text(cat.label,
-                            style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: sel ? cat.color : Colors.grey[500])),
+                        Text(
+                          cat.label,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: sel ? cat.color : Colors.grey[500],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -885,8 +973,11 @@ class _ActivitySheetState extends State<_ActivitySheet> {
               autofocus: !_isEdit,
               decoration: InputDecoration(
                 labelText: 'Activity name *',
-                prefixIcon: Icon(_kCategories[_catIdx].icon,
-                    size: 18, color: _color),
+                prefixIcon: Icon(
+                  _kCategories[_catIdx].icon,
+                  size: 18,
+                  color: _color,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -897,8 +988,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
               maxLines: 2,
               decoration: const InputDecoration(
                 labelText: 'Notes (optional)',
-                prefixIcon:
-                    Icon(Icons.notes_rounded, size: 18),
+                prefixIcon: Icon(Icons.notes_rounded, size: 18),
                 alignLabelWithHint: true,
               ),
             ),
@@ -907,32 +997,35 @@ class _ActivitySheetState extends State<_ActivitySheet> {
             // Days
             Row(
               children: [
-                const Text('Repeat on',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 13)),
+                const Text(
+                  'Repeat on',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
                 const Spacer(),
                 GestureDetector(
                   onTap: _toggleEveryDay,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: _days.length == 7
                           ? _color.withValues(alpha: 0.15)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: _days.length == 7
-                              ? _color
-                              : Colors.grey[300]!),
+                        color: _days.length == 7 ? _color : Colors.grey[300]!,
+                      ),
                     ),
-                    child: Text('Every day',
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: _days.length == 7
-                                ? _color
-                                : Colors.grey[600])),
+                    child: Text(
+                      'Every day',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: _days.length == 7 ? _color : Colors.grey[600],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -952,22 +1045,24 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                       decoration: BoxDecoration(
                         color: sel
                             ? _color.withValues(alpha: 0.15)
-                            : (isDark
-                                ? const Color(0xFF1C1F2A)
-                                : Colors.white),
+                            : (isDark ? const Color(0xFF1C1F2A) : Colors.white),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: sel
-                                ? _color
-                                : Colors.grey.withValues(alpha: 0.25),
-                            width: sel ? 1.5 : 1),
+                          color: sel
+                              ? _color
+                              : Colors.grey.withValues(alpha: 0.25),
+                          width: sel ? 1.5 : 1,
+                        ),
                       ),
                       child: Center(
-                        child: Text(_kDayShort[i],
-                            style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: sel ? _color : Colors.grey[400])),
+                        child: Text(
+                          _kDayShort[i],
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: sel ? _color : Colors.grey[400],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -977,13 +1072,16 @@ class _ActivitySheetState extends State<_ActivitySheet> {
             const SizedBox(height: 18),
 
             // Time
-            const Text('Time',
-                style: TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 13)),
+            const Text(
+              'Time',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
-                Expanded(child: _timeBtn('Start', _start, () => _pickTime(true))),
+                Expanded(
+                  child: _timeBtn('Start', _start, () => _pickTime(true)),
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: GestureDetector(
@@ -995,29 +1093,42 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                       }
                     },
                     child: _end != null
-                        ? _timeBtn('End', _end!, () => _pickTime(false),
+                        ? _timeBtn(
+                            'End',
+                            _end!,
+                            () => _pickTime(false),
                             clearable: true,
-                            onClear: () => setState(() => _end = null))
+                            onClear: () => setState(() => _end = null),
+                          )
                         : Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 14),
+                              horizontal: 14,
+                              vertical: 14,
+                            ),
                             decoration: BoxDecoration(
                               color: isDark
                                   ? const Color(0xFF1C1F2A)
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                  color: Colors.grey.withValues(alpha: 0.25)),
+                                color: Colors.grey.withValues(alpha: 0.25),
+                              ),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.add_rounded,
-                                    size: 16, color: Colors.grey[400]),
+                                Icon(
+                                  Icons.add_rounded,
+                                  size: 16,
+                                  color: Colors.grey[400],
+                                ),
                                 const SizedBox(width: 8),
-                                Text('Add end time',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[500])),
+                                Text(
+                                  'Add end time',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -1030,8 +1141,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
             // Notification
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: _notifyEnabled
                     ? _color.withValues(alpha: 0.08)
@@ -1056,17 +1166,17 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text('Reminder',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: _notifyEnabled
-                                    ? null
-                                    : Colors.grey[500])),
+                        child: Text(
+                          'Reminder',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: _notifyEnabled ? null : Colors.grey[500],
+                          ),
+                        ),
                       ),
                       Switch.adaptive(
                         value: _notifyEnabled,
-                        onChanged: (v) =>
-                            setState(() => _notifyEnabled = v),
+                        onChanged: (v) => setState(() => _notifyEnabled = v),
                         activeThumbColor: _color,
                         activeTrackColor: _color.withValues(alpha: 0.4),
                       ),
@@ -1079,33 +1189,27 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                         final sel = _notifyMinutes == m;
                         return Expanded(
                           child: GestureDetector(
-                            onTap: () =>
-                                setState(() => _notifyMinutes = m),
+                            onTap: () => setState(() => _notifyMinutes = m),
                             child: Container(
-                              margin:
-                                  const EdgeInsets.only(right: 6),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 6),
+                              margin: const EdgeInsets.only(right: 6),
+                              padding: const EdgeInsets.symmetric(vertical: 6),
                               decoration: BoxDecoration(
                                 color: sel
                                     ? _color.withValues(alpha: 0.15)
                                     : Colors.transparent,
-                                borderRadius:
-                                    BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: sel
-                                        ? _color
-                                        : Colors.grey[300]!),
+                                  color: sel ? _color : Colors.grey[300]!,
+                                ),
                               ),
                               child: Center(
                                 child: Text(
                                   m == 0 ? 'At time' : '${m}m',
                                   style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      color: sel
-                                          ? _color
-                                          : Colors.grey[500]),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: sel ? _color : Colors.grey[500],
+                                  ),
                                 ),
                               ),
                             ),
@@ -1123,15 +1227,13 @@ class _ActivitySheetState extends State<_ActivitySheet> {
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: _submit,
-                icon: Icon(_isEdit
-                    ? Icons.save_rounded
-                    : Icons.add_rounded),
-                label: Text(
-                    _isEdit ? 'Save Changes' : 'Add Activity'),
+                icon: Icon(_isEdit ? Icons.save_rounded : Icons.add_rounded),
+                label: Text(_isEdit ? 'Save Changes' : 'Add Activity'),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
             ),
@@ -1151,8 +1253,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: _color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
@@ -1166,22 +1267,29 @@ class _ActivitySheetState extends State<_ActivitySheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label,
-                      style: TextStyle(
-                          fontSize: 10, color: Colors.grey[500])),
-                  Text(_fmtTime(time),
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          color: _color)),
+                  Text(
+                    label,
+                    style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                  ),
+                  Text(
+                    _fmtTime(time),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      color: _color,
+                    ),
+                  ),
                 ],
               ),
             ),
             if (clearable && onClear != null)
               GestureDetector(
                 onTap: onClear,
-                child: Icon(Icons.close_rounded,
-                    size: 14, color: Colors.grey[400]),
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 14,
+                  color: Colors.grey[400],
+                ),
               ),
           ],
         ),

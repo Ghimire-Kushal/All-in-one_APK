@@ -12,13 +12,11 @@ class TimetableProvider extends ChangeNotifier {
 
   List<TimetableEntry> get entries => List.unmodifiable(_entries);
 
-  List<TimetableEntry> forDay(int dayOfWeek) => _entries
-      .where((e) => e.days.contains(dayOfWeek))
-      .toList()
-    ..sort((a, b) => a.startMinutes.compareTo(b.startMinutes));
+  List<TimetableEntry> forDay(int dayOfWeek) =>
+      _entries.where((e) => e.days.contains(dayOfWeek)).toList()
+        ..sort((a, b) => a.startMinutes.compareTo(b.startMinutes));
 
-  List<TimetableEntry> get todayEntries =>
-      forDay(DateTime.now().weekday);
+  List<TimetableEntry> get todayEntries => forDay(DateTime.now().weekday);
 
   TimetableEntry? get nextTodayEntry {
     final nowMin = TimeOfDay.now().hour * 60 + TimeOfDay.now().minute;
@@ -53,7 +51,9 @@ class TimetableProvider extends ChangeNotifier {
   Future<void> _save() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-        _prefKey, jsonEncode(_entries.map((e) => e.toJson()).toList()));
+      _prefKey,
+      jsonEncode(_entries.map((e) => e.toJson()).toList()),
+    );
   }
 
   Future<void> addEntry(TimetableEntry entry) async {
@@ -74,8 +74,10 @@ class TimetableProvider extends ChangeNotifier {
   }
 
   Future<void> deleteEntry(String id) async {
-    final entry = _entries.firstWhere((e) => e.id == id,
-        orElse: () => throw StateError('not found'));
+    final entry = _entries.firstWhere(
+      (e) => e.id == id,
+      orElse: () => throw StateError('not found'),
+    );
     _cancelAll(entry);
     _entries.removeWhere((e) => e.id == id);
     notifyListeners();
@@ -94,21 +96,20 @@ class TimetableProvider extends ChangeNotifier {
     required String colorHex,
     required bool notifyEnabled,
     required int notifyMinutesBefore,
-  }) =>
-      TimetableEntry(
-        id: _uuid.v4(),
-        title: title,
-        notes: notes,
-        categoryIndex: categoryIndex,
-        days: days,
-        startHour: startHour,
-        startMinute: startMinute,
-        endHour: endHour,
-        endMinute: endMinute,
-        colorHex: colorHex,
-        notifyEnabled: notifyEnabled,
-        notifyMinutesBefore: notifyMinutesBefore,
-      );
+  }) => TimetableEntry(
+    id: _uuid.v4(),
+    title: title,
+    notes: notes,
+    categoryIndex: categoryIndex,
+    days: days,
+    startHour: startHour,
+    startMinute: startMinute,
+    endHour: endHour,
+    endMinute: endMinute,
+    colorHex: colorHex,
+    notifyEnabled: notifyEnabled,
+    notifyMinutesBefore: notifyMinutesBefore,
+  );
 
   // Each entry × weekday gets its own notification ID so they don't collide.
   int _notifId(String entryId, int weekday) =>

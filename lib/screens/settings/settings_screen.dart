@@ -15,7 +15,10 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Settings',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -108,7 +111,11 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _profileCard(BuildContext context, ColorScheme cs, AppAuthProvider auth) {
+  Widget _profileCard(
+    BuildContext context,
+    ColorScheme cs,
+    AppAuthProvider auth,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -123,8 +130,12 @@ class SettingsScreen extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: Colors.white.withOpacity(0.2),
-            child: const Icon(Icons.person_rounded, size: 32, color: Colors.white),
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            child: const Icon(
+              Icons.person_rounded,
+              size: 32,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -145,7 +156,7 @@ class SettingsScreen extends StatelessWidget {
                 Text(
                   auth.isSignedIn ? auth.email : 'Sign in to sync data',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 12,
                   ),
                   maxLines: 1,
@@ -160,14 +171,14 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _sectionLabel(String text) => Text(
-        text.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.2,
-          color: Colors.grey,
-        ),
-      );
+    text.toUpperCase(),
+    style: const TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 1.2,
+      color: Colors.grey,
+    ),
+  );
 
   Widget _settingsTile(
     BuildContext context, {
@@ -186,14 +197,22 @@ class SettingsScreen extends StatelessWidget {
       ),
       child: ListTile(
         leading: leading,
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text(subtitle,
-            style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-        trailing: trailing ??
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+        ),
+        trailing:
+            trailing ??
             (onTap != null
-                ? Icon(Icons.arrow_forward_ios_rounded,
-                    size: 13, color: Colors.grey[400])
+                ? Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 13,
+                    color: Colors.grey[400],
+                  )
                 : null),
         onTap: onTap,
       ),

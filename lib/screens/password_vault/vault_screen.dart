@@ -39,7 +39,12 @@ class _SetPinViewState extends State<_SetPinView> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Password Vault', style: TextStyle(fontWeight: FontWeight.w700))),
+      appBar: AppBar(
+        title: const Text(
+          'Password Vault',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -53,14 +58,23 @@ class _SetPinViewState extends State<_SetPinView> {
                   color: cs.primaryContainer,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.lock_outline_rounded, size: 40, color: cs.primary),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 40,
+                  color: cs.primary,
+                ),
               ),
               const SizedBox(height: 24),
-              const Text('Set a PIN', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+              const Text(
+                'Set a PIN',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+              ),
               const SizedBox(height: 8),
-              Text('Create a PIN to protect your passwords',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+              Text(
+                'Create a PIN to protect your passwords',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey[500], fontSize: 13),
+              ),
               const SizedBox(height: 32),
               TextField(
                 controller: _pinCtrl,
@@ -90,12 +104,16 @@ class _SetPinViewState extends State<_SetPinView> {
                   onPressed: () async {
                     if (_pinCtrl.text.length < 4) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('PIN must be at least 4 digits')));
+                        const SnackBar(
+                          content: Text('PIN must be at least 4 digits'),
+                        ),
+                      );
                       return;
                     }
                     if (_pinCtrl.text != _confirmCtrl.text) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('PINs do not match')));
+                        const SnackBar(content: Text('PINs do not match')),
+                      );
                       return;
                     }
                     await widget.provider.setPin(_pinCtrl.text);
@@ -135,7 +153,12 @@ class _UnlockViewState extends State<_UnlockView> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Password Vault', style: TextStyle(fontWeight: FontWeight.w700))),
+      appBar: AppBar(
+        title: const Text(
+          'Password Vault',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -146,7 +169,9 @@ class _UnlockViewState extends State<_UnlockView> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: _wrong ? Colors.red.withOpacity(0.1) : cs.primaryContainer,
+                  color: _wrong
+                      ? Colors.red.withValues(alpha: 0.1)
+                      : cs.primaryContainer,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -156,10 +181,16 @@ class _UnlockViewState extends State<_UnlockView> {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text('Enter PIN', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+              const Text(
+                'Enter PIN',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+              ),
               if (_wrong) ...[
                 const SizedBox(height: 8),
-                const Text('Incorrect PIN', style: TextStyle(color: Colors.red, fontSize: 13)),
+                const Text(
+                  'Incorrect PIN',
+                  style: TextStyle(color: Colors.red, fontSize: 13),
+                ),
               ],
               const SizedBox(height: 32),
               TextField(
@@ -207,7 +238,10 @@ class _VaultListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Password Vault', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Password Vault',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.lock_rounded),
@@ -221,16 +255,24 @@ class _VaultListView extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.password_rounded, size: 64, color: Colors.grey[300]),
+                  Icon(
+                    Icons.password_rounded,
+                    size: 64,
+                    color: Colors.grey[300],
+                  ),
                   const SizedBox(height: 12),
-                  Text('No passwords saved', style: TextStyle(color: Colors.grey[500])),
+                  Text(
+                    'No passwords saved',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
                 ],
               ),
             )
           : ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
               itemCount: provider.entries.length,
-              itemBuilder: (context, i) => _entryCard(context, provider.entries[i], provider),
+              itemBuilder: (context, i) =>
+                  _entryCard(context, provider.entries[i], provider),
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addEntry(context, provider),
@@ -240,7 +282,11 @@ class _VaultListView extends StatelessWidget {
     );
   }
 
-  Widget _entryCard(BuildContext context, PasswordEntry entry, PasswordVaultProvider provider) {
+  Widget _entryCard(
+    BuildContext context,
+    PasswordEntry entry,
+    PasswordVaultProvider provider,
+  ) {
     final cs = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -261,17 +307,31 @@ class _VaultListView extends StatelessWidget {
           child: Center(
             child: Text(
               entry.title.isNotEmpty ? entry.title[0].toUpperCase() : '?',
-              style: TextStyle(fontWeight: FontWeight.w800, color: cs.primary, fontSize: 18),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                color: cs.primary,
+                fontSize: 18,
+              ),
             ),
           ),
         ),
-        title: Text(entry.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text(entry.username, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+        title: Text(
+          entry.title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
+        subtitle: Text(
+          entry.username,
+          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red),
+              icon: const Icon(
+                Icons.delete_outline_rounded,
+                size: 18,
+                color: Colors.red,
+              ),
               onPressed: () => provider.deleteEntry(entry.id),
             ),
           ],
@@ -291,7 +351,10 @@ class _VaultListView extends StatelessWidget {
                 ],
                 if (entry.note.isNotEmpty) ...[
                   const Divider(height: 16),
-                  Text('Note', style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+                  Text(
+                    'Note',
+                    style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                  ),
                   const SizedBox(height: 4),
                   Text(entry.note, style: const TextStyle(fontSize: 13)),
                 ],
@@ -310,7 +373,10 @@ class _VaultListView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[500])),
+              Text(
+                label,
+                style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+              ),
               Text(value, style: const TextStyle(fontSize: 13)),
             ],
           ),
@@ -320,7 +386,10 @@ class _VaultListView extends StatelessWidget {
           onPressed: () {
             Clipboard.setData(ClipboardData(text: value));
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$label copied'), duration: const Duration(seconds: 1)),
+              SnackBar(
+                content: Text('$label copied'),
+                duration: const Duration(seconds: 1),
+              ),
             );
           },
         ),
@@ -342,10 +411,14 @@ class _VaultListView extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
-          left: 20, right: 20, top: 20,
+          left: 20,
+          right: 20,
+          top: 20,
           bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
         ),
         child: SingleChildScrollView(
@@ -353,23 +426,51 @@ class _VaultListView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Add Password', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              const Text(
+                'Add Password',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
               const SizedBox(height: 16),
-              TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Title / Service *')),
+              TextField(
+                controller: titleCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Title / Service *',
+                ),
+              ),
               const SizedBox(height: 10),
-              TextField(controller: userCtrl, decoration: const InputDecoration(labelText: 'Username / Email *')),
+              TextField(
+                controller: userCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Username / Email *',
+                ),
+              ),
               const SizedBox(height: 10),
-              TextField(controller: pwCtrl, obscureText: true, decoration: const InputDecoration(labelText: 'Password *')),
+              TextField(
+                controller: pwCtrl,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'Password *'),
+              ),
               const SizedBox(height: 10),
-              TextField(controller: siteCtrl, decoration: const InputDecoration(labelText: 'Website (optional)')),
+              TextField(
+                controller: siteCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Website (optional)',
+                ),
+              ),
               const SizedBox(height: 10),
-              TextField(controller: noteCtrl, decoration: const InputDecoration(labelText: 'Note (optional)')),
+              TextField(
+                controller: noteCtrl,
+                decoration: const InputDecoration(labelText: 'Note (optional)'),
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () {
-                    if (titleCtrl.text.isEmpty || userCtrl.text.isEmpty || pwCtrl.text.isEmpty) return;
+                    if (titleCtrl.text.isEmpty ||
+                        userCtrl.text.isEmpty ||
+                        pwCtrl.text.isEmpty)
+                      return;
                     provider.addEntry(
                       titleCtrl.text.trim(),
                       userCtrl.text.trim(),
@@ -409,14 +510,22 @@ class _PasswordRowState extends State<_PasswordRow> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Password', style: TextStyle(fontSize: 11, color: Colors.grey[500])),
-              Text(_visible ? widget.password : '•' * widget.password.length,
-                  style: const TextStyle(fontSize: 13)),
+              Text(
+                'Password',
+                style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+              ),
+              Text(
+                _visible ? widget.password : '•' * widget.password.length,
+                style: const TextStyle(fontSize: 13),
+              ),
             ],
           ),
         ),
         IconButton(
-          icon: Icon(_visible ? Icons.visibility_off_rounded : Icons.visibility_rounded, size: 16),
+          icon: Icon(
+            _visible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+            size: 16,
+          ),
           onPressed: () => setState(() => _visible = !_visible),
         ),
         IconButton(
@@ -424,7 +533,10 @@ class _PasswordRowState extends State<_PasswordRow> {
           onPressed: () {
             Clipboard.setData(ClipboardData(text: widget.password));
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Password copied'), duration: Duration(seconds: 1)),
+              const SnackBar(
+                content: Text('Password copied'),
+                duration: Duration(seconds: 1),
+              ),
             );
           },
         ),

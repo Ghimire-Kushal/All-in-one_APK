@@ -14,23 +14,56 @@ class UtilitiesHubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      _Item('Date Converter', 'AD ↔ BS conversion', Icons.calendar_month_rounded,
-          AppColors.dateConverter, const DateConverterScreen()),
-      _Item('Stopwatch', 'Measure elapsed time', Icons.timer_rounded,
-          AppColors.stopwatch, const StopwatchScreen()),
-      _Item('Timer', 'Countdown timer', Icons.hourglass_bottom_rounded,
-          AppColors.timer, const TimerScreen()),
-      _Item('Age Calculator', 'Calculate exact age', Icons.cake_rounded,
-          AppColors.ageCal, const AgeCalculatorScreen()),
-      _Item('Unit Converter', 'Length, weight, temp & more', Icons.swap_horiz_rounded,
-          AppColors.unitConverter, const UnitConverterScreen()),
-      _Item('Calculator', 'Scientific calculator with saved totals', Icons.calculate_rounded,
-          AppColors.calculator, const CalculatorScreen()),
+      _Item(
+        'Date Converter',
+        'AD ↔ BS conversion',
+        Icons.calendar_month_rounded,
+        AppColors.dateConverter,
+        const DateConverterScreen(),
+      ),
+      _Item(
+        'Stopwatch',
+        'Measure elapsed time',
+        Icons.timer_rounded,
+        AppColors.stopwatch,
+        const StopwatchScreen(),
+      ),
+      _Item(
+        'Timer',
+        'Countdown timer',
+        Icons.hourglass_bottom_rounded,
+        AppColors.timer,
+        const TimerScreen(),
+      ),
+      _Item(
+        'Age Calculator',
+        'Calculate exact age',
+        Icons.cake_rounded,
+        AppColors.ageCal,
+        const AgeCalculatorScreen(),
+      ),
+      _Item(
+        'Unit Converter',
+        'Length, weight, temperature & more',
+        Icons.swap_horiz_rounded,
+        AppColors.unitConverter,
+        const UnitConverterScreen(),
+      ),
+      _Item(
+        'Calculator',
+        'Calculator with saved totals & base converter',
+        Icons.calculate_rounded,
+        AppColors.calculator,
+        const CalculatorScreen(),
+      ),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Utilities', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Utilities',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         automaticallyImplyLeading: false,
       ),
       body: ListView.builder(

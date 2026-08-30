@@ -50,23 +50,23 @@ class Expense {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'amount': amount,
-        'category': category.name,
-        'date': date.toIso8601String(),
-        'note': note,
-      };
+    'id': id,
+    'title': title,
+    'amount': amount,
+    'category': category.name,
+    'date': date.toIso8601String(),
+    'note': note,
+  };
 
   factory Expense.fromJson(Map<String, dynamic> json) => Expense(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        amount: (json['amount'] as num).toDouble(),
-        category: ExpenseCategory.values.firstWhere(
-          (e) => e.name == json['category'],
-          orElse: () => ExpenseCategory.other,
-        ),
-        date: DateTime.parse(json['date'] as String),
-        note: json['note'] as String? ?? '',
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    amount: (json['amount'] as num).toDouble(),
+    category: ExpenseCategory.values.firstWhere(
+      (e) => e.name == json['category'],
+      orElse: () => ExpenseCategory.other,
+    ),
+    date: DateTime.parse(json['date'] as String),
+    note: json['note'] as String? ?? '',
+  );
 }
