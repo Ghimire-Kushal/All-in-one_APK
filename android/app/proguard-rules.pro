@@ -25,3 +25,31 @@
 # Keep JSON model classes (used by http package)
 -keepattributes Signature
 -keepattributes *Annotation*
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+
+# R8 full mode — keep default constructors for serialization
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# Timezone data
+-keep class org.joda.time.** { *; }
+-dontwarn org.joda.time.**
+
+# PDF / printing
+-keep class com.tom_roush.pdfbox.** { *; }
+-dontwarn com.tom_roush.**
+-dontwarn org.apache.pdfbox.**
+
+# File picker
+-keep class com.mr.flutter.plugin.filepicker.** { *; }
+
+# Image picker
+-keep class io.flutter.plugins.imagepicker.** { *; }
+
+# Suppress common R8 full mode warnings
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**

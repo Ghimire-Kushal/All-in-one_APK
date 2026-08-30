@@ -24,7 +24,7 @@ class UtilitiesHubScreen extends StatelessWidget {
           AppColors.ageCal, const AgeCalculatorScreen()),
       _Item('Unit Converter', 'Length, weight, temp & more', Icons.swap_horiz_rounded,
           AppColors.unitConverter, const UnitConverterScreen()),
-      _Item('Calculator', 'Standard calculator', Icons.calculate_rounded,
+      _Item('Calculator', 'Scientific calculator with saved totals', Icons.calculate_rounded,
           AppColors.calculator, const CalculatorScreen()),
     ];
 
