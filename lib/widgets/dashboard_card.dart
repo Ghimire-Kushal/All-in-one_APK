@@ -16,7 +16,9 @@ import '../providers/todo_provider.dart';
 const _kWeatherApiKey = 'YOUR_OPENWEATHER_API_KEY';
 
 class DashboardCard extends StatefulWidget {
-  const DashboardCard({super.key});
+  const DashboardCard({super.key, this.isActive = true});
+
+  final bool isActive;
 
   @override
   State<DashboardCard> createState() => _DashboardCardState();
@@ -53,9 +55,7 @@ class _DashboardCardState extends State<DashboardCard>
     ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOut));
     _anim.forward();
 
-    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() => _now = DateTime.now());
-    });
+    if (widget.isActive) _startClock();
 
     _fetchWeather();
   }
@@ -67,8 +67,35 @@ class _DashboardCardState extends State<DashboardCard>
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant DashboardCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isActive == widget.isActive) return;
+    if (widget.isActive) {
+      setState(() => _now = DateTime.now());
+      _startClock();
+    } else {
+      _clockTimer?.cancel();
+      _clockTimer = null;
+    }
+  }
+
+  void _startClock() {
+    _clockTimer?.cancel();
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted && widget.isActive) setState(() => _now = DateTime.now());
+    });
+  }
+
   Future<void> _fetchWeather() async {
     try {
+      // A placeholder key means weather is deliberately disabled. Do not wake
+      // the location hardware or ask for permission in that configuration.
+      if (_kWeatherApiKey == 'YOUR_OPENWEATHER_API_KEY') {
+        _stopLoading();
+        return;
+      }
+
       if (!await Geolocator.isLocationServiceEnabled()) {
         _stopLoading();
         return;
@@ -84,16 +111,14 @@ class _DashboardCardState extends State<DashboardCard>
         return;
       }
 
-      final pos = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.low,
-        ),
-      ).timeout(const Duration(seconds: 15));
-
-      if (_kWeatherApiKey == 'YOUR_OPENWEATHER_API_KEY') {
-        _stopLoading();
-        return;
-      }
+      // Reuse a cached location whenever possible to avoid powering up GPS.
+      final pos =
+          await Geolocator.getLastKnownPosition() ??
+          await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.low,
+            ),
+          ).timeout(const Duration(seconds: 15));
 
       final lat = pos.latitude;
       final lon = pos.longitude;

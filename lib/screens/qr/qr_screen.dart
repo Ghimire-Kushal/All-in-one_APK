@@ -1,4 +1,6 @@
-import 'dart:io';
+import 'dart:async';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,16 +31,24 @@ class _QrScreenState extends State<QrScreen>
   void initState() {
     super.initState();
     _tab = TabController(length: 2, vsync: this);
+    _tab.addListener(_onTabChanged);
   }
 
   @override
   void dispose() {
+    _tab.removeListener(_onTabChanged);
     _tab.dispose();
     _textCtrl.dispose();
     _ssidCtrl.dispose();
     _wifiPwCtrl.dispose();
     _urlCtrl.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged() {
+    // Rebuild only after a tab transition settles so the scanner can release
+    // the camera whenever it is not the visible tab.
+    if (!_tab.indexIsChanging && mounted) setState(() {});
   }
 
   void _generate() {
@@ -76,7 +86,10 @@ class _QrScreenState extends State<QrScreen>
       ),
       body: TabBarView(
         controller: _tab,
-        children: [_buildGenerator(context), const _QrScannerTab()],
+        children: [
+          _buildGenerator(context),
+          _QrScannerTab(isActive: _tab.index == 1),
+        ],
       ),
     );
   }
@@ -240,7 +253,9 @@ class _QrScreenState extends State<QrScreen>
 // ─── QR Scanner Tab ────────────────────────────────────────────────────────────
 
 class _QrScannerTab extends StatefulWidget {
-  const _QrScannerTab();
+  const _QrScannerTab({required this.isActive});
+
+  final bool isActive;
 
   @override
   State<_QrScannerTab> createState() => _QrScannerTabState();
@@ -252,24 +267,56 @@ class _QrScannerTabState extends State<_QrScannerTab>
   String? _scannedValue;
   bool _torchOn = false;
   bool _paused = false;
-  File? _galleryImage;
+  bool _appIsResumed = true;
+  Uint8List? _galleryImageBytes;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _controller = MobileScannerController(
+      autoStart: false,
       detectionSpeed: DetectionSpeed.noDuplicates,
       facing: CameraFacing.back,
       torchEnabled: false,
+      formats: const [BarcodeFormat.qrCode],
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) => _syncCamera());
+  }
+
+  @override
+  void didUpdateWidget(covariant _QrScannerTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isActive != widget.isActive) _syncCamera();
   }
 
   Future<void> _pickFromGallery() async {
+    await _controller.stop();
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked == null) return;
-    setState(() => _galleryImage = File(picked.path));
-    final result = await _controller.analyzeImage(picked.path);
+    if (picked == null) {
+      _syncCamera();
+      return;
+    }
+
+    final imageBytes = await picked.readAsBytes();
+    if (!mounted) return;
+    setState(() => _galleryImageBytes = imageBytes);
+
+    // mobile_scanner does not support gallery analysis on web. Showing a
+    // helpful message is preferable to an uncaught UnsupportedError.
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gallery QR scanning is not supported on web')),
+      );
+      return;
+    }
+
+    BarcodeCapture? result;
+    try {
+      result = await _controller.analyzeImage(picked.path);
+    } on MobileScannerBarcodeException {
+      result = null;
+    }
     if (!mounted) return;
     if (result != null && result.barcodes.isNotEmpty) {
       final value = result.barcodes.first.rawValue;
@@ -282,7 +329,8 @@ class _QrScannerTabState extends State<_QrScannerTab>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No QR code found in the image')),
       );
-      setState(() => _galleryImage = null);
+      setState(() => _galleryImageBytes = null);
+      _syncCamera();
     }
   }
 
@@ -295,14 +343,26 @@ class _QrScannerTabState extends State<_QrScannerTab>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _controller.stop();
-    } else if (state == AppLifecycleState.resumed && !_paused) {
-      _controller.start();
+    _appIsResumed = state == AppLifecycleState.resumed;
+    _syncCamera();
+  }
+
+  Future<void> _syncCamera() async {
+    final shouldRun =
+        widget.isActive && _appIsResumed && !_paused && _galleryImageBytes == null;
+    try {
+      if (shouldRun) {
+        await _controller.start();
+      } else {
+        await _controller.stop();
+      }
+    } on MobileScannerException {
+      // Permission and device errors are reflected by MobileScanner's view.
     }
   }
 
   void _onDetect(BarcodeCapture capture) {
+    if (!widget.isActive || _paused) return;
     final barcode = capture.barcodes.firstOrNull;
     if (barcode == null || barcode.rawValue == null) return;
     final value = barcode.rawValue!;
@@ -312,7 +372,7 @@ class _QrScannerTabState extends State<_QrScannerTab>
       _scannedValue = value;
       _paused = true;
     });
-    _controller.stop();
+    unawaited(_controller.stop());
     _showResultSheet(value);
   }
 
@@ -325,12 +385,13 @@ class _QrScannerTabState extends State<_QrScannerTab>
       ),
       builder: (_) => _ScanResultSheet(value: value),
     ).then((_) {
+      if (!mounted) return;
       setState(() {
         _scannedValue = null;
         _paused = false;
-        _galleryImage = null;
+        _galleryImageBytes = null;
       });
-      _controller.start();
+      _syncCamera();
     });
   }
 
@@ -339,19 +400,23 @@ class _QrScannerTabState extends State<_QrScannerTab>
     final cs = Theme.of(context).colorScheme;
     return Stack(
       children: [
-        // Camera view (always running in background)
-        MobileScanner(controller: _controller, onDetect: _onDetect),
+        // The camera is mounted and started only while the Scanner tab is
+        // visible; keeping it off in the Generator tab saves battery/heat.
+        if (widget.isActive)
+          MobileScanner(controller: _controller, onDetect: _onDetect)
+        else
+          const ColoredBox(color: Colors.black),
 
         // Gallery image preview overlay
-        if (_galleryImage != null)
+        if (_galleryImageBytes != null)
           Positioned.fill(
             child: Container(
               color: Colors.black87,
               child: Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.file(
-                    _galleryImage!,
+                  child: Image.memory(
+                    _galleryImageBytes!,
                     fit: BoxFit.contain,
                     width: 280,
                     height: 280,
@@ -362,7 +427,7 @@ class _QrScannerTabState extends State<_QrScannerTab>
           ),
 
         // Overlay with scan frame (only when camera is active)
-        if (_galleryImage == null)
+        if (_galleryImageBytes == null)
           CustomPaint(
             painter: _ScanOverlayPainter(cs.primary),
             child: const SizedBox.expand(),
@@ -407,7 +472,7 @@ class _QrScannerTabState extends State<_QrScannerTab>
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                _galleryImage != null
+                _galleryImageBytes != null
                     ? 'Scanning image…'
                     : 'Point camera at a QR code',
                 style: const TextStyle(color: Colors.white, fontSize: 13),

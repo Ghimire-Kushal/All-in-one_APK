@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'signup_screen.dart';
-import '../main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,13 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text.trim(),
       );
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainScreen()),
-          (_) => false,
-        );
-      }
+      // MyApp's auth StreamBuilder owns the login-to-home transition. Keeping
+      // navigation there avoids constructing duplicate MainScreen instances.
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         final msg = switch (e.code) {

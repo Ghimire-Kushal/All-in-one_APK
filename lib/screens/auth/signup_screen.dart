@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../main_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -36,13 +35,8 @@ class _SignupScreenState extends State<SignupScreen> {
       if (name.isNotEmpty) {
         await cred.user?.updateDisplayName(name);
       }
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainScreen()),
-          (_) => false,
-        );
-      }
+      // MyApp's auth StreamBuilder owns the signup-to-home transition. Keeping
+      // navigation there avoids constructing duplicate MainScreen instances.
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(

@@ -19,7 +19,11 @@ import '../settings/settings_screen.dart';
 import '../timetable/timetable_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.isActive = true});
+
+  /// Whether this tab is currently visible. The dashboard uses it to avoid
+  /// refreshing the clock while the user is on another top-level tab.
+  final bool isActive;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -48,7 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_isSearching && _searchQuery.isNotEmpty)
             _buildSearchResults(context)
           else ...[
-            const SliverToBoxAdapter(child: DashboardCard()),
+            SliverToBoxAdapter(
+              child: DashboardCard(isActive: widget.isActive),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),

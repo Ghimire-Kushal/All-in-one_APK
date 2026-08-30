@@ -14,18 +14,28 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    ProductivityTab(),
-    UtilitiesHubScreen(),
-    MoreTab(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          TickerMode(
+            enabled: _currentIndex == 0,
+            child: HomeScreen(isActive: _currentIndex == 0),
+          ),
+          TickerMode(
+            enabled: _currentIndex == 1,
+            child: const ProductivityTab(),
+          ),
+          TickerMode(
+            enabled: _currentIndex == 2,
+            child: const UtilitiesHubScreen(),
+          ),
+          TickerMode(enabled: _currentIndex == 3, child: const MoreTab()),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
