@@ -70,7 +70,7 @@ class _ClipboardScreenState extends State<ClipboardScreen> {
           TextButton.icon(
             onPressed: () async {
               final data = await Clipboard.getData('text/plain');
-              if (!mounted) return;
+              if (!context.mounted) return;
               if (data?.text != null) {
                 provider.addItem(data!.text!);
                 ScaffoldMessenger.of(context).showSnackBar(

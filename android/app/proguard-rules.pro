@@ -3,10 +3,9 @@
 -keep class io.flutter.plugins.** { *; }
 -dontwarn io.flutter.embedding.**
 
-# Firebase
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
--dontwarn com.google.firebase.**
+# Firebase and Google Play services ship their own consumer R8 rules. Keeping
+# every class here prevents unused SDK code from being removed from release
+# builds, so no blanket keep rules are needed.
 
 # Kotlin
 -keep class kotlin.** { *; }

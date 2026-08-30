@@ -69,7 +69,7 @@ class PdfToolsScreen extends StatelessWidget {
 
 class _ToolCard extends StatelessWidget {
   final _Tool tool;
-  const _ToolCard({super.key, required this.tool});
+  const _ToolCard({required this.tool});
 
   @override
   Widget build(BuildContext context) {

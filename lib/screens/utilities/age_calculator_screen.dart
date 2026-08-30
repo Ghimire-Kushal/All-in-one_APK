@@ -48,8 +48,9 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
 
     // Next birthday
     DateTime nextBd = DateTime(target.year, dob.month, dob.day);
-    if (!nextBd.isAfter(target))
+    if (!nextBd.isAfter(target)) {
       nextBd = DateTime(target.year + 1, dob.month, dob.day);
+    }
     final daysToNext = nextBd.difference(target).inDays;
 
     setState(() {

@@ -469,8 +469,9 @@ class _VaultListView extends StatelessWidget {
                   onPressed: () {
                     if (titleCtrl.text.isEmpty ||
                         userCtrl.text.isEmpty ||
-                        pwCtrl.text.isEmpty)
+                        pwCtrl.text.isEmpty) {
                       return;
+                    }
                     provider.addEntry(
                       titleCtrl.text.trim(),
                       userCtrl.text.trim(),
