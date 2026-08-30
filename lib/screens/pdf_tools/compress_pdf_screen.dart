@@ -16,6 +16,8 @@ class CompressPdfScreen extends StatefulWidget {
 
 class _CompressPdfScreenState extends State<CompressPdfScreen> {
   static const _accent = Color(0xFF26A69A);
+  static const _maxInputBytes = 20 * 1024 * 1024;
+  static const _maxPages = 20;
 
   String? _inputPath;
   String? _inputName;
@@ -34,10 +36,20 @@ class _CompressPdfScreenState extends State<CompressPdfScreen> {
     if (result == null || result.files.isEmpty) return;
     final f = result.files.first;
     if (f.path == null) return;
+    if (f.size > _maxInputBytes) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Choose a PDF smaller than 20 MB.')),
+        );
+      }
+      return;
+    }
+    final size = await File(f.path!).length();
+    if (!mounted) return;
     setState(() {
       _inputPath = f.path;
       _inputName = f.name;
-      _inputSize = File(f.path!).lengthSync();
+      _inputSize = size;
       _outputPath = null;
       _outputSize = null;
     });
@@ -45,14 +57,23 @@ class _CompressPdfScreenState extends State<CompressPdfScreen> {
 
   Future<void> _compress() async {
     if (_inputPath == null) return;
+    final inputPath = _inputPath!;
     setState(() => _isCompressing = true);
     try {
-      final bytes = await File(_inputPath!).readAsBytes();
+      final bytes = await File(inputPath).readAsBytes();
+      if (!mounted) return;
       final dpi = _quality.dpi;
       final doc = pw.Document();
+      var pageCount = 0;
 
       await for (final page in Printing.raster(bytes, dpi: dpi)) {
+        if (++pageCount > _maxPages) {
+          throw StateError(
+            'Compression is limited to $_maxPages pages at once.',
+          );
+        }
         final png = await page.toPng();
+        if (!mounted) return;
         final img = pw.MemoryImage(png);
         doc.addPage(
           pw.Page(
@@ -69,10 +90,12 @@ class _CompressPdfScreenState extends State<CompressPdfScreen> {
         '${dir.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
       await out.writeAsBytes(await doc.save());
+      final outputSize = await out.length();
+      if (!mounted) return;
 
       setState(() {
         _outputPath = out.path;
-        _outputSize = out.lengthSync();
+        _outputSize = outputSize;
         _isCompressing = false;
       });
 
@@ -85,12 +108,11 @@ class _CompressPdfScreenState extends State<CompressPdfScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isCompressing = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -361,8 +383,8 @@ class _CompressPdfScreenState extends State<CompressPdfScreen> {
 }
 
 enum _Quality {
-  high(dpi: 150, label: 'High', description: 'Best quality, larger file'),
-  medium(dpi: 96, label: 'Medium', description: 'Balanced quality and size'),
+  high(dpi: 120, label: 'High', description: 'Best quality, larger file'),
+  medium(dpi: 90, label: 'Medium', description: 'Balanced quality and size'),
   low(dpi: 72, label: 'Low', description: 'Smallest file, lower quality');
 
   final double dpi;

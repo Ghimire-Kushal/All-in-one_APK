@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -306,8 +305,12 @@ class _QrScannerTabState extends State<_QrScannerTab>
     // helpful message is preferable to an uncaught UnsupportedError.
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gallery QR scanning is not supported on web')),
+        const SnackBar(
+          content: Text('Gallery QR scanning is not supported on web'),
+        ),
       );
+      setState(() => _galleryImageBytes = null);
+      _syncCamera();
       return;
     }
 
@@ -349,7 +352,10 @@ class _QrScannerTabState extends State<_QrScannerTab>
 
   Future<void> _syncCamera() async {
     final shouldRun =
-        widget.isActive && _appIsResumed && !_paused && _galleryImageBytes == null;
+        widget.isActive &&
+        _appIsResumed &&
+        !_paused &&
+        _galleryImageBytes == null;
     try {
       if (shouldRun) {
         await _controller.start();

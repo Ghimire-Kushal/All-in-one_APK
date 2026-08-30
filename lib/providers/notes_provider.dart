@@ -13,6 +13,9 @@ class NotesProvider extends ChangeNotifier {
   List<Note> _notes = [];
   String? _uid;
   StreamSubscription<QuerySnapshot>? _fsSub;
+  StreamSubscription<User?>? _authSub;
+  bool _isDisposed = false;
+  int _authGeneration = 0;
 
   List<Note> get notes => _notes;
   List<Note> get pinnedNotes => _notes.where((n) => n.isPinned).toList();
@@ -20,11 +23,14 @@ class NotesProvider extends ChangeNotifier {
 
   NotesProvider() {
     _load();
-    FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
+    _authSub = FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _authGeneration++;
+    _authSub?.cancel();
     _fsSub?.cancel();
     super.dispose();
   }
@@ -36,25 +42,32 @@ class NotesProvider extends ChangeNotifier {
           .collection('notes');
 
   void _onAuthChanged(User? user) async {
+    final generation = ++_authGeneration;
     await _fsSub?.cancel();
+    if (_isDisposed || generation != _authGeneration) return;
     _fsSub = null;
-    _uid = user?.uid;
-    if (user == null) return;
+    final uid = user?.uid;
+    _uid = uid;
+    if (uid == null) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final syncKey = 'notes_synced_${user.uid}';
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
+    final syncKey = 'notes_synced_$uid';
     final hasSynced = prefs.getBool(syncKey) ?? false;
 
     if (!hasSynced && _notes.isNotEmpty) {
       final batch = FirebaseFirestore.instance.batch();
       for (final n in _notes) {
-        batch.set(_col(user.uid).doc(n.id), n.toJson());
+        batch.set(_col(uid).doc(n.id), n.toJson());
       }
       await batch.commit();
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
     }
     await prefs.setBool(syncKey, true);
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
 
-    _fsSub = _col(user.uid).snapshots().listen((snap) {
+    _fsSub = _col(uid).snapshots().listen((snap) {
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
       _notes = snap.docs.map((d) => Note.fromJson(d.data())).toList();
       _sort();
       notifyListeners();

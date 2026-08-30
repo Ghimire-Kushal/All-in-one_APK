@@ -16,6 +16,11 @@ class MergePdfScreen extends StatefulWidget {
 
 class _MergePdfScreenState extends State<MergePdfScreen> {
   static const _accent = Color(0xFF5C6BC0);
+  static const _maxFiles = 4;
+  static const _maxInputBytes = 15 * 1024 * 1024;
+  static const _maxPages = 20;
+  static const _rasterDpi = 96.0;
+
   final List<_PdfFile> _files = [];
   bool _isMerging = false;
   String? _outputPath;
@@ -27,14 +32,41 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
       allowMultiple: true,
     );
     if (result == null) return;
-    setState(() {
-      for (final f in result.files) {
-        if (f.path != null && !_files.any((e) => e.path == f.path)) {
-          _files.add(_PdfFile(name: f.name, path: f.path!));
-        }
+    final additions = <_PdfFile>[];
+    var skippedForSize = 0;
+    var skippedForLimit = 0;
+    for (final file in result.files) {
+      if (file.path == null || _files.any((e) => e.path == file.path)) {
+        continue;
       }
+      if (_files.length + additions.length >= _maxFiles) {
+        skippedForLimit++;
+        continue;
+      }
+      if (file.size > _maxInputBytes) {
+        skippedForSize++;
+        continue;
+      }
+      additions.add(_PdfFile(name: file.name, path: file.path!));
+    }
+    if (!mounted) return;
+    setState(() {
+      _files.addAll(additions);
       _outputPath = null;
     });
+    if (skippedForSize > 0) {
+      _showMessage('PDFs over 15 MB were skipped to keep merging responsive.');
+    } else if (skippedForLimit > 0) {
+      _showMessage('You can merge up to $_maxFiles PDFs at once.');
+    }
+  }
+
+  void _showMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
   }
 
   void _remove(int index) => setState(() {
@@ -56,10 +88,16 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
     setState(() => _isMerging = true);
     try {
       final doc = pw.Document();
+      var pageCount = 0;
       for (final pdfFile in _files) {
         final bytes = await File(pdfFile.path).readAsBytes();
-        await for (final page in Printing.raster(bytes, dpi: 150)) {
+        if (!mounted) return;
+        await for (final page in Printing.raster(bytes, dpi: _rasterDpi)) {
+          if (++pageCount > _maxPages) {
+            throw StateError('Merging is limited to $_maxPages pages at once.');
+          }
           final png = await page.toPng();
+          if (!mounted) return;
           final img = pw.MemoryImage(png);
           doc.addPage(
             pw.Page(
@@ -76,6 +114,7 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
         '${dir.path}/merged_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
       await out.writeAsBytes(await doc.save());
+      if (!mounted) return;
       setState(() {
         _outputPath = out.path;
         _isMerging = false;
@@ -89,12 +128,11 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isMerging = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -200,7 +238,7 @@ class _MergePdfScreenState extends State<MergePdfScreen> {
                 children: [
                   if (_files.isNotEmpty)
                     Text(
-                      '${_files.length} PDF${_files.length == 1 ? '' : 's'} · drag to reorder',
+                      '${_files.length}/$_maxFiles PDFs · max $_maxPages pages · drag to reorder',
                       style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                     ),
                   const SizedBox(height: 10),

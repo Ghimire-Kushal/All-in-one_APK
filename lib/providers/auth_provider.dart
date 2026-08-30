@@ -1,9 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AppAuthProvider extends ChangeNotifier {
+  late final StreamSubscription<User?> _authSub;
+
   AppAuthProvider() {
-    FirebaseAuth.instance.authStateChanges().listen((_) => notifyListeners());
+    _authSub = FirebaseAuth.instance.authStateChanges().listen(
+      (_) => notifyListeners(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _authSub.cancel();
+    super.dispose();
   }
 
   User? get user => FirebaseAuth.instance.currentUser;

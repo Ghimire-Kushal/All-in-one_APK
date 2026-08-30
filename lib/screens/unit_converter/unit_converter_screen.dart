@@ -101,6 +101,12 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
     _inputCtrl.clear();
   }
 
+  @override
+  void dispose() {
+    _inputCtrl.dispose();
+    super.dispose();
+  }
+
   void _convert() {
     final input = double.tryParse(_inputCtrl.text);
     if (input == null) return;

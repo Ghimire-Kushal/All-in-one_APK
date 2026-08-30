@@ -52,9 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_isSearching && _searchQuery.isNotEmpty)
             _buildSearchResults(context)
           else ...[
-            SliverToBoxAdapter(
-              child: DashboardCard(isActive: widget.isActive),
-            ),
+            SliverToBoxAdapter(child: DashboardCard(isActive: widget.isActive)),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),

@@ -14,6 +14,9 @@ class TodoProvider extends ChangeNotifier {
   List<Task> _tasks = [];
   String? _uid;
   StreamSubscription<QuerySnapshot>? _fsSub;
+  StreamSubscription<User?>? _authSub;
+  bool _isDisposed = false;
+  int _authGeneration = 0;
 
   List<Task> get tasks => _tasks;
   List<Task> get pending =>
@@ -23,11 +26,14 @@ class TodoProvider extends ChangeNotifier {
 
   TodoProvider() {
     _load();
-    FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
+    _authSub = FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _authGeneration++;
+    _authSub?.cancel();
     _fsSub?.cancel();
     super.dispose();
   }
@@ -39,25 +45,32 @@ class TodoProvider extends ChangeNotifier {
           .collection('tasks');
 
   void _onAuthChanged(User? user) async {
+    final generation = ++_authGeneration;
     await _fsSub?.cancel();
+    if (_isDisposed || generation != _authGeneration) return;
     _fsSub = null;
-    _uid = user?.uid;
-    if (user == null) return;
+    final uid = user?.uid;
+    _uid = uid;
+    if (uid == null) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final syncKey = 'tasks_synced_${user.uid}';
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
+    final syncKey = 'tasks_synced_$uid';
     final hasSynced = prefs.getBool(syncKey) ?? false;
 
     if (!hasSynced && _tasks.isNotEmpty) {
       final batch = FirebaseFirestore.instance.batch();
       for (final t in _tasks) {
-        batch.set(_col(user.uid).doc(t.id), t.toJson());
+        batch.set(_col(uid).doc(t.id), t.toJson());
       }
       await batch.commit();
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
     }
     await prefs.setBool(syncKey, true);
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
 
-    _fsSub = _col(user.uid).snapshots().listen((snap) {
+    _fsSub = _col(uid).snapshots().listen((snap) {
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
       _tasks = snap.docs.map((d) => Task.fromJson(d.data())).toList();
       notifyListeners();
       _saveLocal();

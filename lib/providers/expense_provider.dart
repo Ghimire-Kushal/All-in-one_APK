@@ -13,16 +13,22 @@ class ExpenseProvider extends ChangeNotifier {
   List<Expense> _expenses = [];
   String? _uid;
   StreamSubscription<QuerySnapshot>? _fsSub;
+  StreamSubscription<User?>? _authSub;
+  bool _isDisposed = false;
+  int _authGeneration = 0;
 
   List<Expense> get expenses => _expenses;
 
   ExpenseProvider() {
     _load();
-    FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
+    _authSub = FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _authGeneration++;
+    _authSub?.cancel();
     _fsSub?.cancel();
     super.dispose();
   }
@@ -34,25 +40,32 @@ class ExpenseProvider extends ChangeNotifier {
           .collection('expenses');
 
   void _onAuthChanged(User? user) async {
+    final generation = ++_authGeneration;
     await _fsSub?.cancel();
+    if (_isDisposed || generation != _authGeneration) return;
     _fsSub = null;
-    _uid = user?.uid;
-    if (user == null) return;
+    final uid = user?.uid;
+    _uid = uid;
+    if (uid == null) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final syncKey = 'expenses_synced_${user.uid}';
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
+    final syncKey = 'expenses_synced_$uid';
     final hasSynced = prefs.getBool(syncKey) ?? false;
 
     if (!hasSynced && _expenses.isNotEmpty) {
       final batch = FirebaseFirestore.instance.batch();
       for (final e in _expenses) {
-        batch.set(_col(user.uid).doc(e.id), e.toJson());
+        batch.set(_col(uid).doc(e.id), e.toJson());
       }
       await batch.commit();
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
     }
     await prefs.setBool(syncKey, true);
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
 
-    _fsSub = _col(user.uid).snapshots().listen((snap) {
+    _fsSub = _col(uid).snapshots().listen((snap) {
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
       _expenses = snap.docs.map((d) => Expense.fromJson(d.data())).toList();
       _expenses.sort((a, b) => b.date.compareTo(a.date));
       notifyListeners();

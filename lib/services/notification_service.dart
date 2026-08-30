@@ -93,7 +93,6 @@ class NotificationService {
           priority: Priority.high,
           playSound: true,
           enableVibration: true,
-          fullScreenIntent: true,
           styleInformation: BigTextStyleInformation(taskTitle),
         ),
         iOS: const DarwinNotificationDetails(
@@ -102,7 +101,9 @@ class NotificationService {
           presentSound: true,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      // Inexact alarms are more battery-friendly and work on Android 12+
+      // without the special exact-alarm permission.
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
@@ -148,7 +149,6 @@ class NotificationService {
           priority: Priority.high,
           playSound: true,
           enableVibration: true,
-          fullScreenIntent: true,
           styleInformation: BigTextStyleInformation(
             '$subject starts in $notifyMinutesBefore minutes',
           ),
@@ -159,7 +159,7 @@ class NotificationService {
           presentSound: true,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,

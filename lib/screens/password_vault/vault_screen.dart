@@ -36,6 +36,13 @@ class _SetPinViewState extends State<_SetPinView> {
   final _confirmCtrl = TextEditingController();
 
   @override
+  void dispose() {
+    _pinCtrl.dispose();
+    _confirmCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
@@ -150,6 +157,12 @@ class _UnlockViewState extends State<_UnlockView> {
   bool _wrong = false;
 
   @override
+  void dispose() {
+    _pinCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
@@ -224,6 +237,7 @@ class _UnlockViewState extends State<_UnlockView> {
 
   Future<void> _unlock() async {
     final ok = await widget.provider.unlock(_pinCtrl.text);
+    if (!mounted) return;
     if (!ok) setState(() => _wrong = true);
     _pinCtrl.clear();
   }
@@ -401,94 +415,107 @@ class _VaultListView extends StatelessWidget {
     return _PasswordRow(password: password);
   }
 
-  void _addEntry(BuildContext context, PasswordVaultProvider provider) {
+  Future<void> _addEntry(
+    BuildContext context,
+    PasswordVaultProvider provider,
+  ) async {
     final titleCtrl = TextEditingController();
     final userCtrl = TextEditingController();
     final pwCtrl = TextEditingController();
     final siteCtrl = TextEditingController();
     final noteCtrl = TextEditingController();
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+    try {
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Add Password',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: titleCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Title / Service *',
+        builder: (ctx) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Add Password',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: userCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Username / Email *',
+                const SizedBox(height: 16),
+                TextField(
+                  controller: titleCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Title / Service *',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: pwCtrl,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password *'),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: siteCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Website (optional)',
+                const SizedBox(height: 10),
+                TextField(
+                  controller: userCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Username / Email *',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: noteCtrl,
-                decoration: const InputDecoration(labelText: 'Note (optional)'),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    if (titleCtrl.text.isEmpty ||
-                        userCtrl.text.isEmpty ||
-                        pwCtrl.text.isEmpty) {
-                      return;
-                    }
-                    provider.addEntry(
-                      titleCtrl.text.trim(),
-                      userCtrl.text.trim(),
-                      pwCtrl.text,
-                      website: siteCtrl.text.trim(),
-                      note: noteCtrl.text.trim(),
-                    );
-                    Navigator.pop(ctx);
-                  },
-                  child: const Text('Save'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: pwCtrl,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Password *'),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                TextField(
+                  controller: siteCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Website (optional)',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: noteCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Note (optional)',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () async {
+                      if (titleCtrl.text.isEmpty ||
+                          userCtrl.text.isEmpty ||
+                          pwCtrl.text.isEmpty) {
+                        return;
+                      }
+                      await provider.addEntry(
+                        titleCtrl.text.trim(),
+                        userCtrl.text.trim(),
+                        pwCtrl.text,
+                        website: siteCtrl.text.trim(),
+                        note: noteCtrl.text.trim(),
+                      );
+                      if (ctx.mounted) Navigator.pop(ctx);
+                    },
+                    child: const Text('Save'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      titleCtrl.dispose();
+      userCtrl.dispose();
+      pwCtrl.dispose();
+      siteCtrl.dispose();
+      noteCtrl.dispose();
+    }
   }
 }
 

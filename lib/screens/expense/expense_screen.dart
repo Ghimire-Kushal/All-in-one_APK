@@ -326,125 +326,132 @@ class _ExpenseScreenState extends State<ExpenseScreen>
     );
   }
 
-  void _showAddExpense(BuildContext context) {
+  Future<void> _showAddExpense(BuildContext context) async {
     final titleCtrl = TextEditingController();
     final amountCtrl = TextEditingController();
     ExpenseCategory category = ExpenseCategory.food;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setS) => Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Add Expense',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: titleCtrl,
-                decoration: const InputDecoration(labelText: 'Title'),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: amountCtrl,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+    try {
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setS) => Padding(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Add Expense',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Amount (Rs)',
-                  prefixText: 'Rs ',
+                const SizedBox(height: 16),
+                TextField(
+                  controller: titleCtrl,
+                  decoration: const InputDecoration(labelText: 'Title'),
                 ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Category',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: ExpenseCategory.values
-                    .map(
-                      (cat) => GestureDetector(
-                        onTap: () => setS(() => category = cat),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: category == cat
-                                ? (_categoryColors[cat] ?? Colors.grey)
-                                      .withValues(alpha: 0.15)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
+                const SizedBox(height: 12),
+                TextField(
+                  controller: amountCtrl,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'Amount (Rs)',
+                    prefixText: 'Rs ',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Category',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: ExpenseCategory.values
+                      .map(
+                        (cat) => GestureDetector(
+                          onTap: () => setS(() => category = cat),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
                               color: category == cat
                                   ? (_categoryColors[cat] ?? Colors.grey)
-                                  : Colors.grey[300]!,
+                                        .withValues(alpha: 0.15)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: category == cat
+                                    ? (_categoryColors[cat] ?? Colors.grey)
+                                    : Colors.grey[300]!,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  cat.emoji,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  cat.label,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: category == cat
+                                        ? (_categoryColors[cat] ?? Colors.grey)
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                cat.emoji,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                cat.label,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: category == cat
-                                      ? (_categoryColors[cat] ?? Colors.grey)
-                                      : Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final amount = double.tryParse(amountCtrl.text);
-                    if (titleCtrl.text.trim().isEmpty || amount == null) return;
-                    context.read<ExpenseProvider>().addExpense(
-                      titleCtrl.text.trim(),
-                      amount,
-                      category,
-                    );
-                    Navigator.pop(ctx);
-                  },
-                  child: const Text('Add'),
+                      )
+                      .toList(),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () async {
+                      final amount = double.tryParse(amountCtrl.text);
+                      if (titleCtrl.text.trim().isEmpty || amount == null) {
+                        return;
+                      }
+                      await context.read<ExpenseProvider>().addExpense(
+                        titleCtrl.text.trim(),
+                        amount,
+                        category,
+                      );
+                      if (ctx.mounted) Navigator.pop(ctx);
+                    },
+                    child: const Text('Add'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      titleCtrl.dispose();
+      amountCtrl.dispose();
+    }
   }
 }

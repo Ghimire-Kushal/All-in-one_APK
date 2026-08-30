@@ -8,14 +8,28 @@ class TimerScreen extends StatefulWidget {
   State<TimerScreen> createState() => _TimerScreenState();
 }
 
-class _TimerScreenState extends State<TimerScreen> {
+class _TimerScreenState extends State<TimerScreen> with WidgetsBindingObserver {
   int _totalSeconds = 0;
   int _remaining = 0;
   Timer? _timer;
+  DateTime? _deadline;
   bool _running = false;
   bool _finished = false;
+  bool _appIsResumed = true;
 
   int _hInput = 0, _mInput = 5, _sInput = 0;
+  late final FixedExtentScrollController _hourController;
+  late final FixedExtentScrollController _minuteController;
+  late final FixedExtentScrollController _secondController;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _hourController = FixedExtentScrollController(initialItem: _hInput);
+    _minuteController = FixedExtentScrollController(initialItem: _mInput);
+    _secondController = FixedExtentScrollController(initialItem: _sInput);
+  }
 
   double get _progress =>
       _totalSeconds == 0 ? 0 : (_totalSeconds - _remaining) / _totalSeconds;
@@ -30,22 +44,39 @@ class _TimerScreenState extends State<TimerScreen> {
   }
 
   void _start() {
-    if (_remaining == 0) {
-      _totalSeconds = _hInput * 3600 + _mInput * 60 + _sInput;
-      _remaining = _totalSeconds;
-    }
-    if (_remaining == 0) return;
+    if (_running) return;
+    final nextTotal = _remaining == 0
+        ? _hInput * 3600 + _mInput * 60 + _sInput
+        : _remaining;
+    if (nextTotal == 0) return;
     setState(() {
+      _totalSeconds = nextTotal;
+      _remaining = nextTotal;
       _running = true;
       _finished = false;
+      _deadline = DateTime.now().add(Duration(seconds: nextTotal));
     });
+    _ensureTicker();
+  }
+
+  int _remainingAt(DateTime now) {
+    final deadline = _deadline;
+    if (deadline == null) return _remaining;
+    final milliseconds = deadline.difference(now).inMilliseconds;
+    return milliseconds <= 0 ? 0 : (milliseconds + 999) ~/ 1000;
+  }
+
+  void _ensureTicker() {
+    if (!_running || !_appIsResumed || _timer?.isActive == true) return;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted || !_appIsResumed) return;
+      final remaining = _remainingAt(DateTime.now());
       setState(() {
-        if (_remaining > 0) {
-          _remaining--;
-        } else {
+        _remaining = remaining;
+        if (remaining == 0) {
           _running = false;
           _finished = true;
+          _deadline = null;
           _timer?.cancel();
         }
       });
@@ -54,7 +85,11 @@ class _TimerScreenState extends State<TimerScreen> {
 
   void _pause() {
     _timer?.cancel();
-    setState(() => _running = false);
+    setState(() {
+      _remaining = _remainingAt(DateTime.now());
+      _running = false;
+      _deadline = null;
+    });
   }
 
   void _reset() {
@@ -64,19 +99,44 @@ class _TimerScreenState extends State<TimerScreen> {
       _remaining = 0;
       _totalSeconds = 0;
       _finished = false;
+      _deadline = null;
     });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    _hourController.dispose();
+    _minuteController.dispose();
+    _secondController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appIsResumed = state == AppLifecycleState.resumed;
+    if (!_appIsResumed) {
+      _timer?.cancel();
+      return;
+    }
+    if (!_running) return;
+    final remaining = _remainingAt(DateTime.now());
+    setState(() {
+      _remaining = remaining;
+      if (remaining == 0) {
+        _running = false;
+        _finished = true;
+        _deadline = null;
+      }
+    });
+    _ensureTicker();
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isPicking = !_running && _remaining == 0;
+    final isPicking = !_running && _remaining == 0 && !_finished;
 
     return Scaffold(
       appBar: AppBar(
@@ -114,11 +174,29 @@ class _TimerScreenState extends State<TimerScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _wheel('Hours', 23, _hInput, (v) => setState(() => _hInput = v)),
+              _wheel(
+                'Hours',
+                23,
+                _hInput,
+                _hourController,
+                (v) => setState(() => _hInput = v),
+              ),
               _colon(),
-              _wheel('Min', 59, _mInput, (v) => setState(() => _mInput = v)),
+              _wheel(
+                'Min',
+                59,
+                _mInput,
+                _minuteController,
+                (v) => setState(() => _mInput = v),
+              ),
               _colon(),
-              _wheel('Sec', 59, _sInput, (v) => setState(() => _sInput = v)),
+              _wheel(
+                'Sec',
+                59,
+                _sInput,
+                _secondController,
+                (v) => setState(() => _sInput = v),
+              ),
             ],
           ),
         ],
@@ -126,7 +204,13 @@ class _TimerScreenState extends State<TimerScreen> {
     );
   }
 
-  Widget _wheel(String label, int maxVal, int value, Function(int) onChange) {
+  Widget _wheel(
+    String label,
+    int maxVal,
+    int value,
+    FixedExtentScrollController controller,
+    ValueChanged<int> onChange,
+  ) {
     return Column(
       children: [
         Text(
@@ -140,7 +224,7 @@ class _TimerScreenState extends State<TimerScreen> {
           child: ListWheelScrollView.useDelegate(
             itemExtent: 40,
             physics: const FixedExtentScrollPhysics(),
-            controller: FixedExtentScrollController(initialItem: value),
+            controller: controller,
             onSelectedItemChanged: onChange,
             childDelegate: ListWheelChildBuilderDelegate(
               childCount: maxVal + 1,

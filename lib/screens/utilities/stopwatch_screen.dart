@@ -8,10 +8,18 @@ class StopwatchScreen extends StatefulWidget {
   State<StopwatchScreen> createState() => _StopwatchScreenState();
 }
 
-class _StopwatchScreenState extends State<StopwatchScreen> {
+class _StopwatchScreenState extends State<StopwatchScreen>
+    with WidgetsBindingObserver {
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
   final List<String> _laps = [];
+  bool _appIsResumed = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   String get _elapsed => _format(_stopwatch.elapsed);
 
@@ -27,10 +35,18 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
 
   void _start() {
     _stopwatch.start();
-    _timer = Timer.periodic(
-      const Duration(milliseconds: 30),
-      (_) => setState(() {}),
-    );
+    _ensureRefreshTimer();
+  }
+
+  void _ensureRefreshTimer() {
+    if (!_appIsResumed || !_stopwatch.isRunning || _timer?.isActive == true) {
+      return;
+    }
+    // A 20fps refresh keeps the display smooth while cutting rebuilds by 40%
+    // compared with the previous 30ms timer.
+    _timer = Timer.periodic(const Duration(milliseconds: 50), (_) {
+      if (mounted && _appIsResumed && _stopwatch.isRunning) setState(() {});
+    });
   }
 
   void _pause() {
@@ -51,8 +67,22 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appIsResumed = state == AppLifecycleState.resumed;
+    if (_appIsResumed) {
+      _ensureRefreshTimer();
+      if (mounted) setState(() {});
+    } else {
+      // Stopwatch continues to measure elapsed time without waking the UI
+      // while the app is backgrounded.
+      _timer?.cancel();
+    }
   }
 
   @override

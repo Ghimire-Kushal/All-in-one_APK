@@ -14,6 +14,9 @@ class ClipboardProvider extends ChangeNotifier {
   List<ClipboardItem> _items = [];
   String? _uid;
   StreamSubscription<QuerySnapshot>? _fsSub;
+  StreamSubscription<User?>? _authSub;
+  bool _isDisposed = false;
+  int _authGeneration = 0;
 
   List<ClipboardItem> get items => _items;
   List<ClipboardItem> get pinned => _items.where((i) => i.isPinned).toList();
@@ -21,11 +24,14 @@ class ClipboardProvider extends ChangeNotifier {
 
   ClipboardProvider() {
     _load();
-    FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
+    _authSub = FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _authGeneration++;
+    _authSub?.cancel();
     _fsSub?.cancel();
     super.dispose();
   }
@@ -37,25 +43,32 @@ class ClipboardProvider extends ChangeNotifier {
           .collection('clipboard');
 
   void _onAuthChanged(User? user) async {
+    final generation = ++_authGeneration;
     await _fsSub?.cancel();
+    if (_isDisposed || generation != _authGeneration) return;
     _fsSub = null;
-    _uid = user?.uid;
-    if (user == null) return;
+    final uid = user?.uid;
+    _uid = uid;
+    if (uid == null) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final syncKey = 'clipboard_synced_${user.uid}';
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
+    final syncKey = 'clipboard_synced_$uid';
     final hasSynced = prefs.getBool(syncKey) ?? false;
 
     if (!hasSynced && _items.isNotEmpty) {
       final batch = FirebaseFirestore.instance.batch();
       for (final item in _items) {
-        batch.set(_col(user.uid).doc(item.id), item.toJson());
+        batch.set(_col(uid).doc(item.id), item.toJson());
       }
       await batch.commit();
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
     }
     await prefs.setBool(syncKey, true);
+    if (_isDisposed || generation != _authGeneration || _uid != uid) return;
 
-    _fsSub = _col(user.uid).snapshots().listen((snap) {
+    _fsSub = _col(uid).snapshots().listen((snap) {
+      if (_isDisposed || generation != _authGeneration || _uid != uid) return;
       _items = snap.docs.map((d) => ClipboardItem.fromJson(d.data())).toList();
       _sort();
       notifyListeners();

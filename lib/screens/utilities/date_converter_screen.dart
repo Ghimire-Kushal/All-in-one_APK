@@ -289,11 +289,10 @@ class _DateConverterScreenState extends State<DateConverterScreen>
   Widget _numField(
     String label,
     int value,
-    Function(int) onChanged,
+    ValueChanged<int> onChanged,
     int min,
     int max,
   ) {
-    final controller = TextEditingController(text: '$value');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -302,8 +301,8 @@ class _DateConverterScreenState extends State<DateConverterScreen>
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 6),
-        TextField(
-          controller: controller,
+        TextFormField(
+          initialValue: '$value',
           keyboardType: TextInputType.number,
           decoration: InputDecoration(labelText: label),
           onChanged: (v) {

@@ -243,31 +243,91 @@ class ImageToPdfScreen extends StatefulWidget {
 }
 
 class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
+  static const _maxImages = 8;
+  static const _maxImageBytes = 8 * 1024 * 1024;
+
   final List<File> _images = [];
   bool _isConverting = false;
   String? _pdfPath;
 
   Future<void> _pickImages() async {
+    if (_isConverting) return;
     final picker = ImagePicker();
     if (widget.useCamera) {
       final picked = await picker.pickImage(
         source: ImageSource.camera,
-        imageQuality: 90,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 80,
       );
       if (picked != null) {
-        setState(() {
-          _images.add(File(picked.path));
-          _pdfPath = null;
-        });
+        await _addPickedImages([picked]);
       }
     } else {
-      final picked = await picker.pickMultiImage(imageQuality: 90);
+      final picked = await picker.pickMultiImage(
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 80,
+      );
       if (picked.isNotEmpty) {
-        setState(() {
-          _images.addAll(picked.map((x) => File(x.path)));
-          _pdfPath = null;
-        });
+        await _addPickedImages(picked);
       }
+    }
+  }
+
+  Future<void> _pickCameraImage() async {
+    if (_isConverting) return;
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 80,
+    );
+    if (picked != null) await _addPickedImages([picked]);
+  }
+
+  Future<void> _addPickedImages(Iterable<XFile> pickedImages) async {
+    final slots = _maxImages - _images.length;
+    if (slots <= 0) {
+      _showMessage('A document can contain up to $_maxImages images.');
+      return;
+    }
+
+    final additions = <File>[];
+    var skippedForSize = 0;
+    var skippedForLimit = 0;
+    for (final picked in pickedImages) {
+      if (additions.length == slots) {
+        skippedForLimit++;
+        continue;
+      }
+      final file = File(picked.path);
+      if (await file.length() > _maxImageBytes) {
+        skippedForSize++;
+        continue;
+      }
+      additions.add(file);
+    }
+    if (!mounted) return;
+
+    if (additions.isNotEmpty) {
+      setState(() {
+        _images.addAll(additions);
+        _pdfPath = null;
+      });
+    }
+    if (skippedForSize > 0) {
+      _showMessage('Images over 8 MB were skipped to keep conversion cool.');
+    } else if (skippedForLimit > 0) {
+      _showMessage('Only the first $_maxImages images can be added.');
+    }
+  }
+
+  void _showMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -292,6 +352,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
       final doc = pw.Document();
       for (final file in _images) {
         final image = pw.MemoryImage(await file.readAsBytes());
+        if (!mounted) return;
         doc.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
@@ -306,6 +367,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
         '${dir.path}/doc_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
       await out.writeAsBytes(await doc.save());
+      if (!mounted) return;
       setState(() {
         _pdfPath = out.path;
         _isConverting = false;
@@ -319,12 +381,11 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isConverting = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -373,18 +434,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
                       icon: Icons.camera_alt_rounded,
                       label: 'Camera',
                       color: const Color(0xFF5C6BC0),
-                      onTap: () async {
-                        final p = await ImagePicker().pickImage(
-                          source: ImageSource.camera,
-                          imageQuality: 90,
-                        );
-                        if (p != null) {
-                          setState(() {
-                            _images.add(File(p.path));
-                            _pdfPath = null;
-                          });
-                        }
-                      },
+                      onTap: _pickCameraImage,
                     ),
                   ),
                 ],
@@ -442,7 +492,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
                 children: [
                   if (_images.isNotEmpty)
                     Text(
-                      '${_images.length} page${_images.length == 1 ? '' : 's'} · drag to reorder',
+                      '${_images.length}/$_maxImages pages · drag to reorder',
                       style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                     ),
                   const SizedBox(height: 10),
